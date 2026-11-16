@@ -1,368 +1,510 @@
 HTML
+
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🥷 NINJA WARRIOR: SHADOW DUEL ⚔️</title>
+    <title>Ninja Game - Mavsumlar</title>
     <style>
-        * { box-sizing: border-box; touch-action: manipulation; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
-            margin: 0; padding: 10px;
-            background: #020617; color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            min-height: 100vh; overflow: hidden;
+            background-color: #020617;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
         #gameContainer {
-            background: linear-gradient(180deg, #090d16 0%, #020617 100%);
-            padding: 15px; border-radius: 20px;
-            border: 2px solid rgba(59, 130, 246, 0.5);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(59, 130, 246, 0.2);
-            display: flex; flex-direction: column; align-items: center;
-            width: 100%; max-width: 740px; position: relative;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
+            border: 2px solid #1e293b;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
         }
-
-        #splashScreen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; height: 400px; text-align: center;
-        }
-        #splashScreen img {
-            max-width: 100%; max-height: 350px; border-radius: 14px;
-            border: 2px solid rgba(59, 130, 246, 0.6);
-            box-shadow: 0 0 25px rgba(59,130,246,0.4);
-        }
-
-        #ninjaMenu, #winModal { text-align: center; padding: 20px; width: 100%; display: none; }
-        
-        .btn {
-            display: block; width: 280px; padding: 14px; margin: 12px auto;
-            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: 2px solid #60a5fa; border-radius: 12px;
-            font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.15s ease;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6); box-shadow: 0 6px 0 #1e40af, 0 8px 15px rgba(0,0,0,0.5);
-        }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1e40af; }
-        .btn-red {
-            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
-            border-color: #f87171; box-shadow: 0 6px 0 #7f1d1d;
-        }
-        .btn-green {
-            background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
-            border-color: #4ade80; box-shadow: 0 6px 0 #166534;
-        }
-
-        .menu-btn {
-            position: absolute; top: 12px; left: 12px;
-            background: #374151; color: white; border: 2px solid #6b7280;
-            padding: 6px 12px; font-size: 13px; font-weight: bold;
-            border-radius: 8px; cursor: pointer; display: none; z-index: 10;
-        }
-
-        #winModal {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.95); border-radius: 18px;
-            flex-direction: column; justify-content: center; align-items: center; z-index: 20;
-        }
-        #winModal h2 { font-size: 32px; color: #38bdf8; margin-bottom: 5px; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
-        #winText { font-size: 20px; margin-bottom: 20px; color: #fff; font-weight: bold; text-align: center; }
-
         canvas {
-            border: 3px solid rgba(59, 130, 246, 0.6); border-radius: 14px;
-            background: #020617; display: none; width: 100%; height: auto;
-            box-shadow: 0 0 25px rgba(0,0,0,0.9);
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+        }
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.98);
+            z-index: 10;
+            padding: 24px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .logo-title {
+            font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(56, 189, 248, 0.45);
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: 1px solid #3b82f6;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 8px;
+            transition: transform 0.1s, box-shadow 0.15s;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+            width: 280px;
+            z-index: 20;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.7);
+        }
+        .btn-secondary {
+            background: #334155;
+            border-color: #475569;
+            box-shadow: none;
+            width: 200px;
+            padding: 10px 20px;
+            font-size: 0.95rem;
         }
 
-        .touch-controls {
-            display: none; width: 100%; margin-top: 12px;
-            justify-content: space-between; gap: 8px; flex-wrap: wrap;
+        /* Season Grid */
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 20px;
+            z-index: 20;
         }
-        .touch-group { display: flex; gap: 6px; }
+        .season-card {
+            background: #1e293b;
+            color: #38bdf8;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: bold;
+            font-size: 1.15rem;
+            cursor: pointer;
+            transition: 0.2s;
+            z-index: 20;
+        }
+        .season-card:hover {
+            border-color: #38bdf8;
+            background: #273549;
+            transform: translateY(-2px);
+        }
+
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            pointer-events: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .hud-item {
+            background: rgba(15, 23, 42, 0.85);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        
+        #touch-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 6;
+            pointer-events: none;
+        }
+        .touch-group {
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
         .t-btn {
-            background: #1f2937; color: white; border: 2px solid rgba(59, 130, 246, 0.5);
-            padding: 12px 16px; font-size: 14px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; user-select: none; outline: none;
-            box-shadow: 0 4px 0 #111827;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.5);
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
         }
-        .t-btn:active { background: #2563eb; transform: translateY(2px); box-shadow: 0 1px 0 #111827; }
-
-        @media (max-width: 768px) {
-            .touch-controls { display: flex; }
+        .t-btn:active {
+            background: rgba(56, 189, 248, 0.7);
         }
     </style>
 </head>
 <body>
+
     <div id="gameContainer">
-        <button class="menu-btn" id="menuBtn" onclick="returnToMenu()">🏠 Menyu</button>
-
-        <!-- Kirish Rasmi (2 sekund) -->
-        <div id="splashScreen">
-            <img src="watermarked_img_1437238758356918555.jpg" alt="Ninja Warrior Intro">
-            <p style="color: #38bdf8; margin-top: 12px; font-weight: bold; font-size: 15px; letter-spacing: 2px;">TUNGI O'YIN YUKLANMOQDA...</p>
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen">
+            <div class="logo-title">NINJA GAME</div>
+            <div class="subtitle">MAVZUVIY MAVSUMLAR REJIMI</div>
+            <button type="button" class="btn" onclick="openSeasonMenu()">MAVSUMLARNI BOSHLASH</button>
         </div>
 
-        <!-- Bosh Menyu -->
-        <div id="ninjaMenu">
-            <h1 style="color: #38bdf8; font-size: 26px; text-shadow: 0 0 10px rgba(56,189,248,0.5); margin-bottom: 5px;">NINJA WARRIOR</h1>
-            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">SHADOW DUEL</p>
-            
-            <button class="btn" onclick="startGame(1)">⚔️ 1 KISHI (VS BOT)</button>
-            <button class="btn btn-red" onclick="startGame(2)">👥 2 KISHILIK (DUEL)</button>
-
-            <div style="margin-top: 15px; font-size: 11px; color: #94a3b8; line-height: 1.5; text-align: left; display: inline-block;">
-                <p><b>P1 (Ko'k Ninja):</b> A/D (Yurish) | W (Sakrash) | S (Qilich) | E (Shuriken) | Q (Maxsus)</p>
-                <p><b>P2 (Qizil Ninja):</b> J/L (Yurish) | I (Sakrash) | K (Qilich) | O (Shuriken) | U (Maxsus)</p>
+        <!-- Season Select Menu -->
+        <div id="season-menu" class="screen hidden">
+            <div class="logo-title" style="font-size: 2rem; margin-bottom: 20px;">MAVSUMLAR</div>
+            <div class="season-grid">
+                <button type="button" class="season-card" onclick="startSeason(1)">🌟 1-Mavsum</button>
+                <button type="button" class="season-card" onclick="startSeason(2)">🔥 2-Mavsum</button>
+                <button type="button" class="season-card" onclick="startSeason(3)">⚡ 3-Mavsum</button>
+                <button type="button" class="season-card" onclick="startSeason(4)">💎 4-Mavsum</button>
+                <button type="button" class="season-card" onclick="startSeason(5)">👑 5-Mavsum</button>
             </div>
+            <button type="button" class="btn btn-secondary" onclick="backToMenu()">◀ ORQAGA</button>
         </div>
 
-        <canvas id="gameCanvas" width="700" height="400"></canvas>
-
-        <!-- Natija Oynasi -->
-        <div id="winModal">
-            <h2 id="winTitle">⚔️ G'OLIB!</h2>
-            <div id="winText">G'alaba!</div>
-            <button class="btn btn-green" onclick="startGame(gameMode)">🔄 QAYTA O'YNASH</button>
-            <button class="btn" onclick="returnToMenu()">🏠 MENYU</button>
+        <!-- Game Over / Win Screen -->
+        <div id="gameover-screen" class="screen hidden">
+            <div id="go-title" class="logo-title">MAVSUM BOSQICHI YAKUNLANDI!</div>
+            <div id="go-text" class="subtitle">Ajoyib natija!</div>
+            <button type="button" class="btn" onclick="nextSeasonLevel()">KEYINGI BOSQICH</button>
+            <button type="button" class="btn btn-secondary" onclick="openSeasonMenu()">MAVSUMLARGA QAYTISH</button>
         </div>
 
-        <!-- Sensorli Panel -->
-        <div class="touch-controls" id="touchPanel">
+        <!-- HUD -->
+        <div id="hud" class="hidden">
+            <div class="hud-item" id="hud-season">MAVSUM: 1</div>
+            <div class="hud-item" id="hud-coins" style="color: #facc15;">OLTINLAR: 0 / 3</div>
+        </div>
+
+        <!-- Touch Controls -->
+        <div id="touch-controls" class="hidden">
             <div class="touch-group">
-                <button class="t-btn" ontouchstart="p1.vx=-4.5" ontouchend="p1.vx=0">◀️</button>
-                <button class="t-btn" ontouchstart="p1.vx=4.5" ontouchend="p1.vx=0">▶️</button>
-                <button class="t-btn" style="background:#2563eb;" onclick="playerJump(p1)">⬆️</button>
+                <button type="button" class="t-btn" data-key="ArrowLeft">◀</button>
+                <button type="button" class="t-btn" data-key="ArrowRight">▶</button>
             </div>
             <div class="touch-group">
-                <button class="t-btn" style="background:#b91c1c;" onclick="playerAttack(p1, p2)">⚔️ Qilich</button>
-                <button class="t-btn" style="background:#d97706;" onclick="playerThrow(p1)">🎯 Shuriken</button>
+                <button type="button" class="t-btn" data-key="KeyX" style="border-color:#38bdf8;">⚔️</button>
+                <button type="button" class="t-btn" data-key="Space" style="border-color:#facc15;">▲</button>
             </div>
         </div>
+
+        <canvas id="gameCanvas" width="900" height="506"></canvas>
     </div>
 
     <script>
-        setTimeout(() => {
-            document.getElementById('splashScreen').style.display = 'none';
-            document.getElementById('ninjaMenu').style.display = 'block';
-        }, 2000);
+        var canvas = document.getElementById('gameCanvas');
+        var ctx = canvas.getContext('2d');
 
-        let canvas = document.getElementById('gameCanvas');
-        let ctx = canvas.getContext("2d");
-        let ninjaMenu = document.getElementById('ninjaMenu');
-        let touchPanel = document.getElementById('touchPanel');
-        let menuBtn = document.getElementById('menuBtn');
-        let winModal = document.getElementById('winModal');
-        let winTitle = document.getElementById('winTitle');
-        let winText = document.getElementById('winText');
+        var gameState = 'MENU';
+        var currentSeason = 1;
+        var seasonLevel = 1;
+        var keys = {};
 
-        let gameMode = 1;
-        let gameRunning = false;
+        var ninja = {
+            x: 100, y: 300, w: 36, h: 54,
+            vx: 0, vy: 0, speed: 6, jumpForce: -13,
+            grounded: false, dir: 1, swordAnim: 0, isAttacking: false
+        };
 
-        let p1 = { x: 100, y: 260, w: 30, h: 45, vx: 0, vy: 0, speed: 4.5, isJumping: false, dir: 1, hp: 100, color: "#3b82f6" }; // Ko'k Ninja
-        let p2 = { x: 550, y: 260, w: 30, h: 45, vx: 0, vy: 0, speed: 4.5, isJumping: false, dir: -1, hp: 100, color: "#ef4444" }; // Qizil Ninja
-        let shurikens = [];
-        let keys = {};
+        var levelData = {
+            platforms: [],
+            coins: [],
+            portal: { x: 800, y: 350, w: 40, h: 60 }
+        };
 
-        window.addEventListener("keydown", e => {
-            let key = e.key.toLowerCase();
-            keys[e.code] = true; keys[key] = true;
+        var scoreCoins = 0;
+        var totalCoinsInLevel = 3;
+
+        function buildSeasonMap(season, lvl) {
+            currentSeason = season;
+            seasonLevel = lvl;
+            scoreCoins = 0;
+            ninja.x = 80;
+            ninja.y = 300;
+            ninja.vx = 0;
+            ninja.vy = 0;
+
+            levelData.platforms = [
+                { x: 0, y: 440, w: 900, h: 66 },
+            ];
+
+            var seed = (season * 50) + (lvl * 13);
+            var platCount = 4 + (lvl % 5);
+            for (var i = 0; i < platCount; i++) {
+                var pw = 110 - (lvl % 20);
+                var px = 140 + (i * 150) % 700;
+                var py = 320 - ((i * 40 + seed) % 210);
+                levelData.platforms.push({ x: px, y: py, w: pw, h: 18 });
+            }
+
+            levelData.coins = [
+                { x: 240, y: 210, collected: false },
+                { x: 480, y: 150, collected: false },
+                { x: 700, y: 90, collected: false }
+            ];
+            totalCoinsInLevel = levelData.coins.length;
+
+            levelData.portal = { x: 820, y: 370 - (lvl % 80), w: 40, h: 70 };
+            updateHUDText();
+        }
+
+        function openSeasonMenu() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('touch-controls').classList.add('hidden');
+            document.getElementById('season-menu').classList.remove('hidden');
+            gameState = 'MENU';
+        }
+
+        function startSeason(season) {
+            document.getElementById('season-menu').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('hud').classList.remove('hidden');
+            document.getElementById('touch-controls').classList.remove('hidden');
             
-            // P1 tugmalari (A, D, W, S, E, Q)
-            if (key === "a") { p1.vx = -p1.speed; p1.dir = -1; }
-            if (key === "d") { p1.vx = p1.speed; p1.dir = 1; }
-            if (key === "w") playerJump(p1);
-            if (key === "s") playerAttack(p1, p2);
-            if (key === "e") playerThrow(p1);
-            if (key === "q") specialMove(p1, p2);
+            buildSeasonMap(season, 1);
+            gameState = 'PLAYING';
+            requestAnimationFrame(gameLoop);
+        }
 
-            // P2 tugmalari (2 kishilik rejim: J, L, I, K, O, U)
-            if (gameMode === 2) {
-                if (key === "j") { p2.vx = -p2.speed; p2.dir = -1; }
-                if (key === "l") { p2.vx = p2.speed; p2.dir = 1; }
-                if (key === "i") playerJump(p2);
-                if (key === "k") playerAttack(p2, p1);
-                if (key === "o") playerThrow(p2);
-                if (key === "u") specialMove(p2, p1);
+        function nextSeasonLevel() {
+            seasonLevel++;
+            if (seasonLevel > 5) {
+                currentSeason = currentSeason < 5 ? currentSeason + 1 : 1;
+                seasonLevel = 1;
+            }
+            startSeason(currentSeason);
+        }
+
+        function backToMenu() {
+            document.getElementById('season-menu').classList.add('hidden');
+            document.getElementById('gameover-screen').classList.add('hidden');
+            document.getElementById('hud').classList.add('hidden');
+            document.getElementById('touch-controls').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            gameState = 'MENU';
+        }
+
+        function updateHUDText() {
+            document.getElementById('hud-season').innerText = currentSeason + '-Mavsum (Bosqich: ' + seasonLevel + ')';
+            document.getElementById('hud-coins').innerText = 'OLTINLAR: ' + scoreCoins + ' / ' + totalCoinsInLevel;
+        }
+
+        window.addEventListener('keydown', function(e) {
+            keys[e.code] = true;
+            if (e.code === 'Space' && ninja.grounded && gameState === 'PLAYING') {
+                ninja.vy = ninja.jumpForce;
+                ninja.grounded = false;
+            }
+            if ((e.code === 'KeyX' || e.code === 'KeyJ') && gameState === 'PLAYING') {
+                ninja.isAttacking = true;
+                ninja.swordAnim = 15;
             }
         });
-        
-        window.addEventListener("keyup", e => {
-            let key = e.key.toLowerCase();
-            keys[e.code] = false; keys[key] = false;
+        window.addEventListener('keyup', function(e) { keys[e.code] = false; });
 
-            if (key === "a" || key === "d") p1.vx = 0;
-            if (gameMode === 2 && (key === "j" || key === "l")) p2.vx = 0;
-        });
-
-        function playerJump(p) {
-            if (!p.isJumping && gameRunning) {
-                p.vy = -12;
-                p.isJumping = true;
-            }
-        }
-
-        function playerAttack(attacker, target) {
-            if (!gameRunning) return;
-            if (Math.abs(attacker.x - target.x) < 55) {
-                target.hp -= 15;
-                checkGameOver();
-            }
-        }
-
-        function playerThrow(p) {
-            if (!gameRunning) return;
-            shurikens.push({ x: p.x + (p.dir > 0 ? 30 : -10), y: p.y + 20, vx: p.dir * 10, owner: p });
-        }
-
-        function specialMove(attacker, target) {
-            if (!gameRunning) return;
-            if (Math.abs(attacker.x - target.x) < 80) {
-                target.hp -= 25;
-                attacker.x += attacker.dir * 40; // Tezkor dash / siljish
-                checkGameOver();
-            }
-        }
-
-        function checkGameOver() {
-            if (p1.hp <= 0 || p2.hp <= 0) {
-                gameRunning = false;
-                winModal.style.display = 'flex';
-                if (p1.hp <= 0 && p2.hp <= 0) {
-                    winTitle.innerText = "🤝 DURANG!";
-                    winText.innerText = "Ikki ninja ham yiqildi!";
-                } else if (p1.hp <= 0) {
-                    winTitle.innerText = gameMode === 1 ? "💀 YUTQAZDINGIZ!" : "🏆 QIZIL NINJA G'OLIB!";
-                    winText.innerText = "Qizil Ninja g'alaba qozondi!";
-                } else {
-                    winTitle.innerText = "🏆 KO'K NINJA G'OLIB!";
-                    winText.innerText = "Ko'k Ninja g'alaba qozondi!";
+        document.querySelectorAll('.t-btn').forEach(function(btn) {
+            var code = btn.getAttribute('data-key');
+            var press = function(e) {
+                e.preventDefault();
+                keys[code] = true;
+                if (code === 'Space' && ninja.grounded && gameState === 'PLAYING') {
+                    ninja.vy = ninja.jumpForce;
+                    ninja.grounded = false;
                 }
-            }
-        }
-
-        function startGame(mode) {
-            gameMode = mode;
-            ninjaMenu.style.display = 'none';
-            winModal.style.display = 'none';
-            canvas.style.display = 'block';
-            touchPanel.style.display = gameMode === 2 ? 'none' : 'flex';
-            menuBtn.style.display = 'block';
-
-            p1.x = 100; p1.y = 260; p1.hp = 100; p1.vx = 0; p1.vy = 0;
-            p2.x = 550; p2.y = 260; p2.hp = 100; p2.vx = 0; p2.vy = 0;
-            shurikens = [];
-
-            gameRunning = true;
-            loop();
-        }
-
-        function returnToMenu() {
-            gameRunning = false;
-            canvas.style.display = 'none';
-            touchPanel.style.display = 'none';
-            menuBtn.style.display = 'none';
-            winModal.style.display = 'none';
-            ninjaMenu.style.display = 'block';
-        }
+                if (code === 'KeyX' && gameState === 'PLAYING') {
+                    ninja.isAttacking = true;
+                    ninja.swordAnim = 15;
+                }
+            };
+            var release = function(e) {
+                e.preventDefault();
+                keys[code] = false;
+            };
+            btn.addEventListener('touchstart', press, { passive: false });
+            btn.addEventListener('touchend', release, { passive: false });
+            btn.addEventListener('mousedown', press);
+            btn.addEventListener('mouseup', release);
+        });
 
         function update() {
-            if (!gameRunning) return;
+            if (gameState !== 'PLAYING') return;
 
-            // Bot AI (1 kishilik rejimda Qizil Ninja avtomatik o'ynaydi)
-            if (gameMode === 1) {
-                if (p2.x > p1.x + 25) { p2.vx = -2.5; p2.dir = -1; }
-                else if (p2.x < p1.x - 25) { p2.vx = 2.5; p2.dir = 1; }
-                else { p2.vx = 0; }
-                if (Math.abs(p1.x - p2.x) < 45 && Math.random() < 0.04) {
-                    playerAttack(p2, p1);
-                }
+            if (keys['ArrowLeft'] || keys['KeyA']) {
+                ninja.vx = -ninja.speed;
+                ninja.dir = -1;
+            } else if (keys['ArrowRight'] || keys['KeyD']) {
+                ninja.vx = ninja.speed;
+                ninja.dir = 1;
+            } else {
+                ninja.vx = 0;
             }
 
-            // Fizika va gravitatsiya
-            [p1, p2].forEach(p => {
-                p.vy += 0.55; p.y += p.vy; p.x += p.vx;
-                if (p.y > 260) { p.y = 260; p.vy = 0; p.isJumping = false; }
-                if (p.x < 15) p.x = 15; if (p.x > 660) p.x = 660;
-            });
+            ninja.vy += 0.55;
+            ninja.x += ninja.vx;
+            ninja.y += ninja.vy;
 
-            // Shurikenlar
-            shurikens.forEach((s, idx) => {
-                s.x += s.vx;
-                let target = (s.owner === p1) ? p2 : p1;
-                if (Math.abs(s.x - target.x) < 20 && Math.abs(s.y - target.y) < 30) {
-                    target.hp -= 10;
-                    shurikens.splice(idx, 1);
-                    checkGameOver();
+            if (ninja.swordAnim > 0) ninja.swordAnim--;
+            else ninja.isAttacking = false;
+
+            ninja.grounded = false;
+            levelData.platforms.forEach(function(p) {
+                if (ninja.x + ninja.w > p.x && ninja.x < p.x + p.w &&
+                    ninja.y + ninja.h >= p.y && ninja.y + ninja.h <= p.y + p.vy + 12 && ninja.vy >= 0) {
+                    ninja.y = p.y - ninja.h;
+                    ninja.vy = 0;
+                    ninja.grounded = true;
                 }
-                if (s.x < 0 || s.x > 700) shurikens.splice(idx, 1);
             });
-        }
 
-        function drawBackground() {
-            // Tungi qorong'u osmon va yorqin oy
-            ctx.fillStyle = "#020617"; ctx.fillRect(0, 0, 700, 400);
-            
-            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-            ctx.beginPath(); ctx.arc(580, 70, 35, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "#020617"; // Oyning chuqur effekti
-            ctx.beginPath(); ctx.arc(570, 65, 30, 0, Math.PI*2); ctx.fill();
+            if (ninja.x < 0) ninja.x = 0;
+            if (ninja.x + ninja.w > canvas.width) ninja.x = canvas.width - ninja.w;
+            if (ninja.y > canvas.height) {
+                buildSeasonMap(currentSeason, seasonLevel);
+            }
 
-            // Qorong'u uylar silueti
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(30, 140, 90, 170);
-            ctx.fillRect(150, 90, 110, 220);
-            ctx.fillRect(310, 160, 100, 150);
-            ctx.fillRect(470, 110, 130, 200);
+            levelData.coins.forEach(function(c) {
+                if (!c.collected && Math.hypot((ninja.x + ninja.w/2) - (c.x + 12), (ninja.y + ninja.h/2) - (c.y + 12)) < 30) {
+                    c.collected = true;
+                    scoreCoins++;
+                    updateHUDText();
+                }
+            });
 
-            // Yer (Ground)
-            ctx.fillStyle = "#090d16"; ctx.fillRect(0, 310, 700, 90);
-            ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.moveTo(0, 310); ctx.lineTo(700, 310); ctx.stroke();
-        }
-
-        function drawNinja(p, accentColor) {
-            // Tana (Qorong'u soyali siluet)
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(p.x + 5, p.y + 15, p.w - 10, p.h - 20);
-            ctx.beginPath(); ctx.arc(p.x + p.w/2, p.y + 10, 10, 0, Math.PI*2); ctx.fill();
-
-            // Ninja boshbog'i va rangli detal (Ko'k yoki Qizil)
-            ctx.fillStyle = accentColor;
-            ctx.fillRect(p.x + (p.dir > 0 ? p.w - 8 : 0), p.y + 6, 12, 4);
-
-            // Porlab turgan ko'zlar
-            ctx.fillStyle = "#facc15";
-            ctx.fillRect(p.x + (p.dir > 0 ? p.w/2 + 2 : p.w/2 - 6), p.y + 8, 4, 3);
+            var pr = levelData.portal;
+            if (scoreCoins >= totalCoinsInLevel &&
+                ninja.x < pr.x + pr.w && ninja.x + ninja.w > pr.x &&
+                ninja.y < pr.y + pr.h && ninja.y + ninja.h > pr.y) {
+                
+                gameState = 'WIN';
+                document.getElementById('hud').classList.add('hidden');
+                document.getElementById('touch-controls').classList.add('hidden');
+                document.getElementById('gameover-screen').classList.remove('hidden');
+                document.getElementById('go-title').innerText = currentSeason + '-MAVSUM BOSQICHI YAKUNLANDI!';
+                document.getElementById('go-text').innerText = 'Keyingi bosqichga o\'ting!';
+            }
         }
 
         function draw() {
-            drawBackground();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // HP / Jon panellari
-            ctx.fillStyle = "#0f172a"; ctx.fillRect(20, 15, 200, 18);
-            ctx.fillStyle = "#3b82f6"; ctx.fillRect(20, 15, (p1.hp / 100) * 200, 18);
-            ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2; ctx.strokeRect(20, 15, 200, 18);
-            ctx.fillStyle = "#fff"; ctx.font = "bold 12px Courier New"; ctx.fillText(`KO'K NINJA: ${Math.max(0, p1.hp)}%`, 25, 29);
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.arc(780, 90, 35, 0, Math.PI * 2);
+            ctx.fill();
 
-            ctx.fillStyle = "#0f172a"; ctx.fillRect(480, 15, 200, 18);
-            ctx.fillStyle = "#ef4444"; ctx.fillRect(480, 15, (p2.hp / 100) * 200, 18);
-            ctx.strokeStyle = "#f87171"; ctx.lineWidth = 2; ctx.strokeRect(480, 15, 200, 18);
-            ctx.fillStyle = "#fff"; ctx.fillText(gameMode === 2 ? `QIZIL NINJA: ${Math.max(0, p2.hp)}%` : `BOT NINJA: ${Math.max(0, p2.hp)}%`, 485, 29);
-
-            // Ninjalarni chizish (1-o'yinchi Ko'k, 2-o'yinchi Qizil)
-            drawNinja(p1, "#3b82f6"); 
-            drawNinja(p2, "#ef4444"); 
-
-            // Shurikenlar
-            ctx.fillStyle = "#e2e8f0";
-            shurikens.forEach(s => {
-                ctx.beginPath(); ctx.arc(s.x, s.y, 5, 0, Math.PI*2); ctx.fill();
+            levelData.platforms.forEach(function(p) {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(p.x, p.y, p.w, p.h);
             });
+
+            levelData.coins.forEach(function(c) {
+                if (!c.collected) {
+                    ctx.fillStyle = '#facc15';
+                    ctx.beginPath();
+                    ctx.arc(c.x + 12, c.y + 12, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ca8a04';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+
+            var pr = levelData.portal;
+            ctx.fillStyle = scoreCoins >= totalCoinsInLevel ? '#38bdf8' : '#475569';
+            ctx.fillRect(pr.x, pr.y, pr.w, pr.h);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(pr.x, pr.y, pr.w, pr.h);
+
+            // Ninja
+            ctx.save();
+            ctx.translate(ninja.x + ninja.w / 2, ninja.y + ninja.h / 2);
+            if (ninja.dir === -1) ctx.scale(-1, 1);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(-14, -15, 28, 38);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-14, -15, 28, 38);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(-16, -34, 32, 24);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(2, -28, 8, 5);
+            if (ninja.isAttacking) {
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(14, -5);
+                ctx.lineTo(38, -15);
+                ctx.stroke();
+            }
+            ctx.restore();
         }
 
-        function loop() {
-            if (!gameRunning) return;
-            update(); draw(); requestAnimationFrame(loop);
+        function gameLoop() {
+            if (gameState === 'PLAYING') {
+                update();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
         }
     </script>
 </body>
