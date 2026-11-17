@@ -1,18 +1,18 @@
 HTML
-
-
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ninja Game - Mavsumlar</title>
+    <title>Ninja Game - Jonli Personaj</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
         body {
@@ -25,487 +25,709 @@ HTML
             min-height: 100vh;
             overflow: hidden;
         }
-
-        #gameContainer {
+        #gameBox {
             position: relative;
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             aspect-ratio: 16 / 9;
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
-            border: 2px solid #1e293b;
+            background: #0f172a;
+            border: 3px solid #38bdf8;
             border-radius: 14px;
             overflow: hidden;
-            background: #0f172a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            -webkit-user-select: none;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
         }
         canvas {
             display: block;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
         }
         .screen {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2, 6, 23, 0.96);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(2, 6, 23, 0.98);
             z-index: 10;
-            padding: 24px;
             text-align: center;
+            padding: 20px;
+            overflow-y: auto;
         }
-        .hidden {
-            display: none !important;
-        }
-        .logo-title {
-            font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+        .hidden { display: none !important; }
+        h1 {
+            font-size: 2.2rem;
             font-weight: 900;
             letter-spacing: 2px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 20px rgba(56, 189, 248, 0.45);
         }
-        .subtitle {
+        p {
             color: #94a3b8;
+            margin-bottom: 15px;
             font-size: 1rem;
-            margin-bottom: 25px;
         }
         .btn {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
             border: 1px solid #3b82f6;
-            padding: 14px 32px;
-            font-size: 1.1rem;
+            padding: 12px 30px;
+            font-size: 1.05rem;
             font-weight: 800;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            margin: 8px;
-            transition: transform 0.1s, box-shadow 0.15s;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
-            width: 280px;
-            z-index: 20;
+            margin: 6px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            transition: 0.15s;
         }
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.7);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
         }
         .btn-secondary {
             background: #334155;
             border-color: #475569;
             box-shadow: none;
-            width: 200px;
+            width: 180px;
             padding: 10px 20px;
             font-size: 0.95rem;
         }
 
-        /* Season Grid */
         .season-grid {
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 380px;
-            margin-bottom: 20px;
-            z-index: 20;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin-bottom: 15px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 5px;
         }
         .season-card {
             background: #1e293b;
-            color: #38bdf8;
             border: 2px solid #334155;
             border-radius: 12px;
-            padding: 16px;
-            font-weight: bold;
-            font-size: 1.15rem;
+            padding: 12px 15px;
             cursor: pointer;
             transition: 0.2s;
-            z-index: 20;
+            text-align: left;
         }
         .season-card:hover {
             border-color: #38bdf8;
-            background: #273549;
             transform: translateY(-2px);
+            background: #273549;
+        }
+        .s-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-bottom: 3px;
+        }
+        .s-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            max-width: 500px;
+            max-height: 240px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 5px;
+        }
+        .level-btn {
+            width: 75px;
+            height: 48px;
+            border-radius: 8px;
+            background: #1e293b;
+            border: 2px solid #38bdf8;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .level-btn:hover {
+            background: #38bdf8;
+            color: #020617;
+            transform: scale(1.05);
         }
 
         #hud {
             position: absolute;
-            top: 15px;
-            left: 20px;
-            right: 20px;
+            top: 12px; left: 15px; right: 15px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: #facc15;
+            pointer-events: none;
             z-index: 5;
-            pointer-events: none;
-            font-weight: bold;
-            font-size: 1.1rem;
         }
-        .hud-item {
-            background: rgba(15, 23, 42, 0.85);
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-        }
-        
-        #touch-controls {
+        #controls {
             position: absolute;
-            bottom: 15px;
-            left: 0;
-            width: 100%;
+            bottom: 12px; left: 15px; right: 15px;
             display: flex;
             justify-content: space-between;
-            padding: 0 20px;
-            z-index: 6;
-            pointer-events: none;
+            z-index: 5;
         }
-        .touch-group {
-            display: flex;
-            gap: 10px;
-            pointer-events: auto;
-        }
-        .t-btn {
-            width: 52px;
-            height: 52px;
+        .ctrl-group { display: flex; gap: 12px; }
+        .c-btn {
+            width: 55px; height: 55px;
             border-radius: 50%;
-            background: rgba(30, 41, 59, 0.8);
-            border: 2px solid rgba(148, 163, 184, 0.5);
-            color: #fff;
+            background: rgba(30, 41, 59, 0.85);
+            border: 2px solid #38bdf8;
+            color: white;
+            font-size: 1.3rem;
             font-weight: bold;
-            font-size: 1.1rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             touch-action: manipulation;
         }
-        .t-btn:active {
-            background: rgba(56, 189, 248, 0.7);
-        }
+        .c-btn:active { background: #38bdf8; color: #020617; }
     </style>
 </head>
 <body>
 
-    <div id="gameContainer">
-        <!-- Main Menu -->
-        <div id="main-menu" class="screen">
-            <div class="logo-title">NINJA GAME</div>
-            <div class="subtitle">MAVZUVIY MAVSUMLAR REJIMI</div>
-            <button type="button" class="btn" onclick="openSeasonMenu()">MAVSUMLARNI BOSHLASH</button>
-        </div>
-
-        <!-- Season Select Menu -->
-        <div id="season-menu" class="screen hidden">
-            <div class="logo-title" style="font-size: 2rem; margin-bottom: 20px;">MAVSUMLAR</div>
-            <div class="season-grid">
-                <button type="button" class="season-card" onclick="startSeason(1)">🌟 1-Mavsum</button>
-                <button type="button" class="season-card" onclick="startSeason(2)">🔥 2-Mavsum</button>
-                <button type="button" class="season-card" onclick="startSeason(3)">⚡ 3-Mavsum</button>
-                <button type="button" class="season-card" onclick="startSeason(4)">💎 4-Mavsum</button>
-                <button type="button" class="season-card" onclick="startSeason(5)">👑 5-Mavsum</button>
-            </div>
-            <button type="button" class="btn btn-secondary" onclick="backToMenu()">◀ ORQAGA</button>
-        </div>
-
-        <!-- Game Over / Win Screen -->
-        <div id="gameover-screen" class="screen hidden">
-            <div id="go-title" class="logo-title">MAVSUM BOSQICHI YAKUNLANDI!</div>
-            <div id="go-text" class="subtitle">Ajoyib natija!</div>
-            <button type="button" class="btn" onclick="nextSeasonLevel()">KEYINGI BOSQICH</button>
-            <button type="button" class="btn btn-secondary" onclick="openSeasonMenu()">MAVSUMLARGA QAYTISH</button>
-        </div>
-
-        <!-- HUD -->
-        <div id="hud" class="hidden">
-            <div class="hud-item" id="hud-season">MAVSUM: 1</div>
-            <div class="hud-item" id="hud-coins" style="color: #facc15;">OLTINLAR: 0 / 3</div>
-        </div>
-
-        <!-- Touch Controls -->
-        <div id="touch-controls" class="hidden">
-            <div class="touch-group">
-                <button type="button" class="t-btn" data-key="ArrowLeft">◀</button>
-                <button type="button" class="t-btn" data-key="ArrowRight">▶</button>
-            </div>
-            <div class="touch-group">
-                <button type="button" class="t-btn" data-key="KeyX" style="border-color:#38bdf8;">⚔️</button>
-                <button type="button" class="t-btn" data-key="Space" style="border-color:#facc15;">▲</button>
-            </div>
-        </div>
-
-        <canvas id="gameCanvas" width="900" height="506"></canvas>
+<div id="gameBox">
+    <!-- 1. Mavsumlar menyusi -->
+    <div id="seasonMenu" class="screen">
+        <h1>NINJA GAME</h1>
+        <p>10 ta mavsum | 3 ta jon | Haqiqiy Ninja Personaj dizayni!</p>
+        <div class="season-grid" id="seasonGrid"></div>
     </div>
 
-    <script>
-        var canvas = document.getElementById('gameCanvas');
-        var ctx = canvas.getContext('2d');
+    <!-- 2. Bosqichlar menyusi -->
+    <div id="levelMenu" class="screen hidden">
+        <h1 id="levelMenuTitle" style="font-size: 1.6rem; margin-bottom: 5px;">BOSQICHNI TANLANG</h1>
+        <p id="levelMenuDesc">Kerakli bosqichni bosing</p>
+        <div class="level-grid" id="levelGrid"></div>
+        <button type="button" class="btn btn-secondary" onclick="backToSeasons()">◀ MAVSUMLARGA</button>
+    </div>
 
-        var gameState = 'MENU';
-        var currentSeason = 1;
-        var seasonLevel = 1;
-        var keys = {};
+    <!-- 3. G'alaba ekrani -->
+    <div id="winScreen" class="screen hidden">
+        <h1 style="color: #4ade80;" id="winTitle">BOSQICH YAKUNLANDI!</h1>
+        <p id="winDesc">Tabriklayman! Keyingi bosqichga o'ting.</p>
+        <button type="button" class="btn" id="nextLevelBtn" onclick="nextLevel()">KEYINGI BOSQICH</button>
+        <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA</button>
+    </div>
 
-        var ninja = {
-            x: 100, y: 300, w: 36, h: 54,
-            vx: 0, vy: 0, speed: 6, jumpForce: -13,
-            grounded: false, dir: 1, swordAnim: 0, isAttacking: false
-        };
+    <!-- 4. Game Over ekrani -->
+    <div id="gameoverScreen" class="screen hidden">
+        <h1 style="color: #ef4444;">YUTQAZDINGIZ! 💀</h1>
+        <p>Barcha jonlaringiz tugadi (Game Over).</p>
+        <button type="button" class="btn" onclick="restartGame()">QAYTA URINIB KO'RISH</button>
+        <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA QAYTISH</button>
+    </div>
 
-        var levelData = {
-            platforms: [],
-            coins: [],
-            portal: { x: 800, y: 350, w: 40, h: 60 }
-        };
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+        <span id="hudLevelText">1-MAVSUM | 1-BOSQICH</span>
+        <span id="hudLivesText" style="color: #f43f5e;">JONLAR: 💖💖💖</span>
+        <span id="hudCoinText">OLTINLAR: 0 / 3</span>
+    </div>
 
-        var scoreCoins = 0;
-        var totalCoinsInLevel = 3;
+    <!-- Touch tugmalar -->
+    <div id="controls" class="hidden">
+        <div class="ctrl-group">
+            <button type="button" class="c-btn" id="btnLeft">◀</button>
+            <button type="button" class="c-btn" id="btnRight">▶</button>
+        </div>
+        <div class="ctrl-group">
+            <button type="button" class="c-btn" id="btnJump" style="border-color: #facc15;">▲</button>
+        </div>
+    </div>
 
-        function buildSeasonMap(season, lvl) {
-            currentSeason = season;
-            seasonLevel = lvl;
-            scoreCoins = 0;
-            ninja.x = 80;
-            ninja.y = 300;
-            ninja.vx = 0;
-            ninja.vy = 0;
+    <canvas id="canvas" width="800" height="450"></canvas>
+</div>
 
-            levelData.platforms = [
-                { x: 0, y: 440, w: 900, h: 66 },
-            ];
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
 
-            var seed = (season * 50) + (lvl * 13);
-            var platCount = 4 + (lvl % 5);
-            for (var i = 0; i < platCount; i++) {
-                var pw = 110 - (lvl % 20);
-                var px = 140 + (i * 150) % 700;
-                var py = 320 - ((i * 40 + seed) % 210);
-                levelData.platforms.push({ x: px, y: py, w: pw, h: 18 });
+    var seasonMenu = document.getElementById('seasonMenu');
+    var levelMenu = document.getElementById('levelMenu');
+    var winScreen = document.getElementById('winScreen');
+    var gameoverScreen = document.getElementById('gameoverScreen');
+    var hud = document.getElementById('hud');
+    var controls = document.getElementById('controls');
+    var seasonGrid = document.getElementById('seasonGrid');
+    var levelGrid = document.getElementById('levelGrid');
+    var levelMenuTitle = document.getElementById('levelMenuTitle');
+    var levelMenuDesc = document.getElementById('levelMenuDesc');
+    var hudLevelText = document.getElementById('hudLevelText');
+    var hudLivesText = document.getElementById('hudLivesText');
+    var hudCoinText = document.getElementById('hudCoinText');
+    var winTitle = document.getElementById('winTitle');
+    var winDesc = document.getElementById('winDesc');
+    var nextLevelBtn = document.getElementById('nextLevelBtn');
+
+    var isPlaying = false;
+    var currentSeason = 1;
+    var currentLevelIndex = 1;
+    var globalLevelId = 1;
+    var coinsCollected = 0;
+    var lives = 3;
+
+    var player = {
+        x: 60, y: 300, w: 32, h: 48,
+        vx: 0, vy: 0, speed: 5.5, jump: -12.5,
+        onGround: false, dir: 1, animFrame: 0
+    };
+
+    var seasonCounts = [5, 10, 10, 15, 15, 20, 20, 25, 25, 30];
+
+    function getLevelData(sIndex, lIndex, gId) {
+        var seed = gId * 29;
+        var platforms = [];
+        platforms.push({ x: 30, y: 370, w: 120, h: 16 });
+
+        var count = 3 + (sIndex % 4);
+        for (var i = 0; i < count; i++) {
+            var pw = Math.max(70, 110 - (sIndex * 3) - (lIndex % 10));
+            var px = 180 + (i * 145 + (seed % 40)) % 520;
+            var py = 310 - ((i * 42 + seed) % 210);
+            platforms.push({ x: px, y: py, w: pw, h: 16 });
+        }
+
+        var coins = [
+            { x: platforms[1] ? platforms[1].x + 25 : 150, y: platforms[1] ? platforms[1].y - 35 : 240 },
+            { x: platforms[2] ? platforms[2].x + 25 : 350, y: platforms[2] ? platforms[2].y - 35 : 180 },
+            { x: platforms[3] ? platforms[3].x + 25 : 550, y: platforms[3] ? platforms[3].y - 35 : 120 }
+        ];
+
+        var lastPlat = platforms[platforms.length - 1];
+        var portal = { x: lastPlat.x + lastPlat.w - 40, y: lastPlat.y - 65, w: 36, h: 65 };
+
+        var spikes = [];
+        var enemies = [];
+
+        if (sIndex >= 2) {
+            if (lIndex % 3 === 0 && platforms.length > 2) {
+                var targetPlat = platforms[2];
+                spikes.push({ x: targetPlat.x + 10, y: targetPlat.y - 14, w: Math.min(30, targetPlat.w - 20), h: 14 });
             }
-
-            levelData.coins = [
-                { x: 240, y: 210, collected: false },
-                { x: 480, y: 150, collected: false },
-                { x: 700, y: 90, collected: false }
-            ];
-            totalCoinsInLevel = levelData.coins.length;
-
-            levelData.portal = { x: 820, y: 370 - (lvl % 80), w: 40, h: 70 };
-            updateHUDText();
         }
 
-        function openSeasonMenu() {
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('gameover-screen').classList.add('hidden');
-            document.getElementById('hud').classList.add('hidden');
-            document.getElementById('touch-controls').classList.add('hidden');
-            document.getElementById('season-menu').classList.remove('hidden');
-            gameState = 'MENU';
+        if (sIndex >= 4) {
+            if (lIndex % 2 === 0 && platforms.length > 1) {
+                var ePlat = platforms[1];
+                var eSpeed = 1.0 + (sIndex * 0.15);
+                enemies.push({
+                    x: ePlat.x + 10,
+                    y: ePlat.y - 32,
+                    w: 28, h: 32,
+                    minX: ePlat.x,
+                    maxX: ePlat.x + ePlat.w - 28,
+                    speed: eSpeed,
+                    dir: 1
+                });
+            }
         }
 
-        function startSeason(season) {
-            document.getElementById('season-menu').classList.add('hidden');
-            document.getElementById('gameover-screen').classList.add('hidden');
-            document.getElementById('hud').classList.remove('hidden');
-            document.getElementById('touch-controls').classList.remove('hidden');
+        return { platforms: platforms, coins: coins, portal: portal, spikes: spikes, enemies: enemies };
+    }
+
+    var platforms = [];
+    var coins = [];
+    var spikes = [];
+    var enemies = [];
+    var portal = {};
+    var input = { left: false, right: false };
+
+    function initSeasonMenu() {
+        seasonGrid.innerHTML = '';
+        for (var s = 1; s <= 10; s++) {
+            var count = seasonCounts[s - 1];
+            var card = document.createElement('div');
+            card.className = 'season-card';
+            card.innerHTML = '<div class="s-title">Mavsum ' + s + '</div><div class="s-desc">' + count + ' ta bosqich</div>';
             
-            buildSeasonMap(season, 1);
-            gameState = 'PLAYING';
-            requestAnimationFrame(gameLoop);
+            (function(seasonNum) {
+                card.onclick = function() {
+                    openSeasonLevels(seasonNum);
+                };
+            })(s);
+
+            seasonGrid.appendChild(card);
         }
+    }
 
-        function nextSeasonLevel() {
-            seasonLevel++;
-            if (seasonLevel > 5) {
-                currentSeason = currentSeason < 5 ? currentSeason + 1 : 1;
-                seasonLevel = 1;
-            }
-            startSeason(currentSeason);
+    function openSeasonLevels(seasonNum) {
+        currentSeason = seasonNum;
+        seasonMenu.classList.add('hidden');
+        levelMenu.classList.remove('hidden');
+
+        var totalLvl = seasonCounts[seasonNum - 1];
+        levelMenuTitle.innerText = seasonNum + "-MAVSUM BOSQICHLARI";
+        levelMenuDesc.innerText = "Jami " + totalLvl + " ta bosqich";
+
+        levelGrid.innerHTML = '';
+        for (var l = 1; l <= totalLvl; l++) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'level-btn';
+            btn.innerText = l;
+
+            (function(lvlIdx) {
+                btn.onclick = function() {
+                    lives = 3;
+                    startSeasonLevel(seasonNum, lvlIdx);
+                };
+            })(l);
+
+            levelGrid.appendChild(btn);
         }
+    }
 
-        function backToMenu() {
-            document.getElementById('season-menu').classList.add('hidden');
-            document.getElementById('gameover-screen').classList.add('hidden');
-            document.getElementById('hud').classList.add('hidden');
-            document.getElementById('touch-controls').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-            gameState = 'MENU';
+    function backToSeasons() {
+        levelMenu.classList.add('hidden');
+        seasonMenu.classList.remove('hidden');
+    }
+
+    function backToLevelMenu() {
+        winScreen.classList.add('hidden');
+        gameoverScreen.classList.add('hidden');
+        hud.classList.add('hidden');
+        controls.classList.add('hidden');
+        levelMenu.classList.remove('hidden');
+        isPlaying = false;
+    }
+
+    function getGlobalId(season, levelIndex) {
+        var id = 0;
+        for (var s = 1; s < season; s++) {
+            id += seasonCounts[s - 1];
         }
+        return id + levelIndex;
+    }
 
-        function updateHUDText() {
-            document.getElementById('hud-season').innerText = currentSeason + '-Mavsum (Bosqich: ' + seasonLevel + ')';
-            document.getElementById('hud-coins').innerText = 'OLTINLAR: ' + scoreCoins + ' / ' + totalCoinsInLevel;
-        }
+    function startSeasonLevel(seasonNum, levelIndex) {
+        currentSeason = seasonNum;
+        currentLevelIndex = levelIndex;
+        globalLevelId = getGlobalId(seasonNum, levelIndex);
 
-        window.addEventListener('keydown', function(e) {
-            keys[e.code] = true;
-            if (e.code === 'Space' && ninja.grounded && gameState === 'PLAYING') {
-                ninja.vy = ninja.jumpForce;
-                ninja.grounded = false;
-            }
-            if ((e.code === 'KeyX' || e.code === 'KeyJ') && gameState === 'PLAYING') {
-                ninja.isAttacking = true;
-                ninja.swordAnim = 15;
-            }
-        });
-        window.addEventListener('keyup', function(e) { keys[e.code] = false; });
-
-        document.querySelectorAll('.t-btn').forEach(function(btn) {
-            var code = btn.getAttribute('data-key');
-            var press = function(e) {
-                e.preventDefault();
-                keys[code] = true;
-                if (code === 'Space' && ninja.grounded && gameState === 'PLAYING') {
-                    ninja.vy = ninja.jumpForce;
-                    ninja.grounded = false;
-                }
-                if (code === 'KeyX' && gameState === 'PLAYING') {
-                    ninja.isAttacking = true;
-                    ninja.swordAnim = 15;
-                }
-            };
-            var release = function(e) {
-                e.preventDefault();
-                keys[code] = false;
-            };
-            btn.addEventListener('touchstart', press, { passive: false });
-            btn.addEventListener('touchend', release, { passive: false });
-            btn.addEventListener('mousedown', press);
-            btn.addEventListener('mouseup', release);
-        });
-
-        function update() {
-            if (gameState !== 'PLAYING') return;
-
-            if (keys['ArrowLeft'] || keys['KeyA']) {
-                ninja.vx = -ninja.speed;
-                ninja.dir = -1;
-            } else if (keys['ArrowRight'] || keys['KeyD']) {
-                ninja.vx = ninja.speed;
-                ninja.dir = 1;
-            } else {
-                ninja.vx = 0;
-            }
-
-            ninja.vy += 0.55;
-            ninja.x += ninja.vx;
-            ninja.y += ninja.vy;
-
-            if (ninja.swordAnim > 0) ninja.swordAnim--;
-            else ninja.isAttacking = false;
-
-            ninja.grounded = false;
-            levelData.platforms.forEach(function(p) {
-                if (ninja.x + ninja.w > p.x && ninja.x < p.x + p.w &&
-                    ninja.y + ninja.h >= p.y && ninja.y + ninja.h <= p.y + p.vy + 12 && ninja.vy >= 0) {
-                    ninja.y = p.y - ninja.h;
-                    ninja.vy = 0;
-                    ninja.grounded = true;
-                }
-            });
-
-            if (ninja.x < 0) ninja.x = 0;
-            if (ninja.x + ninja.w > canvas.width) ninja.x = canvas.width - ninja.w;
-            if (ninja.y > canvas.height) {
-                buildSeasonMap(currentSeason, seasonLevel);
-            }
-
-            levelData.coins.forEach(function(c) {
-                if (!c.collected && Math.hypot((ninja.x + ninja.w/2) - (c.x + 12), (ninja.y + ninja.h/2) - (c.y + 12)) < 30) {
-                    c.collected = true;
-                    scoreCoins++;
-                    updateHUDText();
-                }
-            });
-
-            var pr = levelData.portal;
-            if (scoreCoins >= totalCoinsInLevel &&
-                ninja.x < pr.x + pr.w && ninja.x + ninja.w > pr.x &&
-                ninja.y < pr.y + pr.h && ninja.y + ninja.h > pr.y) {
-                
-                gameState = 'WIN';
-                document.getElementById('hud').classList.add('hidden');
-                document.getElementById('touch-controls').classList.add('hidden');
-                document.getElementById('gameover-screen').classList.remove('hidden');
-                document.getElementById('go-title').innerText = currentSeason + '-MAVSUM BOSQICHI YAKUNLANDI!';
-                document.getElementById('go-text').innerText = 'Keyingi bosqichga o\'ting!';
+        var data = getLevelData(seasonNum, levelIndex, globalLevelId);
+        platforms = data.platforms;
+        portal = data.portal;
+        
+        spikes = [];
+        if (data.spikes) {
+            for (var s = 0; s < data.spikes.length; s++) {
+                spikes.push({ x: data.spikes[s].x, y: data.spikes[s].y, w: data.spikes[s].w, h: data.spikes[s].h });
             }
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        enemies = [];
+        if (data.enemies) {
+            for (var e = 0; e < data.enemies.length; e++) {
+                enemies.push({
+                    x: data.enemies[e].x,
+                    y: data.enemies[e].y,
+                    w: data.enemies[e].w,
+                    h: data.enemies[e].h,
+                    minX: data.enemies[e].minX,
+                    maxX: data.enemies[e].maxX,
+                    speed: data.enemies[e].speed,
+                    dir: 1
+                });
+            }
+        }
 
-            ctx.fillStyle = '#f8fafc';
-            ctx.beginPath();
-            ctx.arc(780, 90, 35, 0, Math.PI * 2);
-            ctx.fill();
+        coins = [];
+        for (var i = 0; i < data.coins.length; i++) {
+            coins.push({ x: data.coins[i].x, y: data.coins[i].y, taken: false });
+        }
 
-            levelData.platforms.forEach(function(p) {
-                ctx.fillStyle = '#1e293b';
-                ctx.fillRect(p.x, p.y, p.w, p.h);
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(p.x, p.y, p.w, p.h);
-            });
+        seasonMenu.classList.add('hidden');
+        levelMenu.classList.add('hidden');
+        winScreen.classList.add('hidden');
+        gameoverScreen.classList.add('hidden');
+        hud.classList.remove('hidden');
+        controls.classList.remove('hidden');
 
-            levelData.coins.forEach(function(c) {
-                if (!c.collected) {
-                    ctx.fillStyle = '#facc15';
-                    ctx.beginPath();
-                    ctx.arc(c.x + 12, c.y + 12, 10, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = '#ca8a04';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+        player.x = platforms[0].x + 10;
+        player.y = platforms[0].y - 50;
+        player.vx = 0;
+        player.vy = 0;
+        player.onGround = false;
+
+        coinsCollected = 0;
+        updateHUD();
+
+        isPlaying = true;
+        requestAnimationFrame(loop);
+    }
+
+    function updateHUD() {
+        hudLevelText.innerText = currentSeason + "-MAVSUM | " + currentLevelIndex + "-BOSQICH";
+        var hearts = "";
+        for (var h = 0; h < lives; h++) hearts += "💖";
+        hudLivesText.innerText = "JONLAR: " + hearts;
+        hudCoinText.innerText = "OLTINLAR: " + coinsCollected + " / 3";
+    }
+
+    function loseLifeOrDie() {
+        lives--;
+        updateHUD();
+        if (lives > 0) {
+            player.x = platforms[0].x + 10;
+            player.y = platforms[0].y - 50;
+            player.vx = 0;
+            player.vy = 0;
+        } else {
+            isPlaying = false;
+            hud.classList.add('hidden');
+            controls.classList.add('hidden');
+            gameoverScreen.classList.remove('hidden');
+        }
+    }
+
+    function restartGame() {
+        lives = 3;
+        startSeasonLevel(currentSeason, currentLevelIndex);
+    }
+
+    function doJump() {
+        if (isPlaying && player.onGround) {
+            player.vy = player.jump;
+            player.onGround = false;
+        }
+    }
+
+    function nextLevel() {
+        var maxLvlInSeason = seasonCounts[currentSeason - 1];
+        if (currentLevelIndex < maxLvlInSeason) {
+            startSeasonLevel(currentSeason, currentLevelIndex + 1);
+        } else if (currentSeason < 10) {
+            startSeasonLevel(currentSeason + 1, 1);
+        } else {
+            backToSeasons();
+        }
+    }
+
+    window.addEventListener('keydown', function(e) {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = true;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = true;
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') doJump();
+    });
+    window.addEventListener('keyup', function(e) {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = false;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = false;
+    });
+
+    var btnLeft = document.getElementById('btnLeft');
+    var btnRight = document.getElementById('btnRight');
+    var btnJump = document.getElementById('btnJump');
+
+    btnLeft.onmousedown = btnLeft.ontouchstart = function(e) { e.preventDefault(); input.left = true; };
+    btnLeft.onmouseup = btnLeft.ontouchend = function(e) { e.preventDefault(); input.left = false; };
+
+    btnRight.onmousedown = btnRight.ontouchstart = function(e) { e.preventDefault(); input.right = true; };
+    btnRight.onmouseup = btnRight.ontouchend = function(e) { e.preventDefault(); input.right = false; };
+
+    btnJump.onmousedown = btnJump.ontouchstart = function(e) { e.preventDefault(); doJump(); };
+
+    function update() {
+        if (input.left) {
+            player.vx = -player.speed;
+            player.dir = -1;
+            player.animFrame += 0.2;
+        } else if (input.right) {
+            player.vx = player.speed;
+            player.dir = 1;
+            player.animFrame += 0.2;
+        } else {
+            player.vx = 0;
+            player.animFrame = 0;
+        }
+
+        player.vy += 0.55;
+        player.x += player.vx;
+        player.y += player.vy;
+
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+
+        if (player.y > canvas.height) {
+            loseLifeOrDie();
+            return;
+        }
+
+        player.onGround = false;
+        for (var i = 0; i < platforms.length; i++) {
+            var p = platforms[i];
+            if (player.x + player.w > p.x && player.x < p.x + p.w &&
+                player.y + player.h >= p.y && player.y + player.h <= p.y + p.h && player.vy >= 0) {
+                player.y = p.y - player.h;
+                player.vy = 0;
+                player.onGround = true;
+            }
+        }
+
+        for (var s = 0; s < spikes.length; s++) {
+            var sp = spikes[s];
+            if (player.x + player.w - 6 > sp.x && player.x + 6 < sp.x + sp.w &&
+                player.y + player.h > sp.y && player.y < sp.y + sp.h) {
+                loseLifeOrDie();
+                return;
+            }
+        }
+
+        for (var en = 0; en < enemies.length; en++) {
+            var enemy = enemies[en];
+            enemy.x += enemy.speed * enemy.dir;
+            if (enemy.x > enemy.maxX) enemy.dir = -1;
+            if (enemy.x < enemy.minX) enemy.dir = 1;
+
+            if (player.x + player.w - 4 > enemy.x && player.x + 4 < enemy.x + enemy.w &&
+                player.y + player.h > enemy.y && player.y < enemy.y + enemy.h) {
+                loseLifeOrDie();
+                return;
+            }
+        }
+
+        for (var j = 0; j < coins.length; j++) {
+            var c = coins[j];
+            if (!c.taken) {
+                var dx = (player.x + player.w / 2) - c.x;
+                var dy = (player.y + player.h / 2) - c.y;
+                if (Math.hypot(dx, dy) < 28) {
+                    c.taken = true;
+                    coinsCollected++;
+                    updateHUD();
                 }
-            });
+            }
+        }
 
-            var pr = levelData.portal;
-            ctx.fillStyle = scoreCoins >= totalCoinsInLevel ? '#38bdf8' : '#475569';
-            ctx.fillRect(pr.x, pr.y, pr.w, pr.h);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(pr.x, pr.y, pr.w, pr.h);
+        if (coinsCollected === 3) {
+            if (player.x < portal.x + portal.w && player.x + player.w > portal.x &&
+                player.y < portal.y + portal.h && player.y + player.h > portal.y) {
+                isPlaying = false;
+                hud.classList.add('hidden');
+                controls.classList.add('hidden');
+                winScreen.classList.remove('hidden');
 
-            // Ninja
-            ctx.save();
-            ctx.translate(ninja.x + ninja.w / 2, ninja.y + ninja.h / 2);
-            if (ninja.dir === -1) ctx.scale(-1, 1);
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(-14, -15, 28, 38);
+                var maxLvl = seasonCounts[currentSeason - 1];
+                if (currentLevelIndex < maxLvl) {
+                    winTitle.innerText = currentLevelIndex + "-BOSQICH YAKUNLANDI!";
+                    winDesc.innerText = "Ajoyib! Keyingi bosqichga o'ting.";
+                    nextLevelBtn.innerText = "KEYINGI BOSQICH";
+                } else if (currentSeason < 10) {
+                    winTitle.innerText = currentSeason + "-MAVSUM YAKUNLANDI! 🌟";
+                    winDesc.innerText = "Tabriklayman! Navbatdagi mavsum ochildi.";
+                    nextLevelBtn.innerText = (currentSeason + 1) + "-MAVSUMGA O'TISH";
+                } else {
+                    winTitle.innerText = "BASHARAT: O'YIN TUGADI! 🏆";
+                    winDesc.innerText = "Siz barcha 10 ta mavsum va 175 ta bosqichni yutdingiz!";
+                    nextLevelBtn.innerText = "MAVSUMLARGA QAYTISH";
+                }
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < platforms.length; i++) {
+            var p = platforms[i];
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(p.x, p.y, p.w, p.h);
             ctx.strokeStyle = '#38bdf8';
             ctx.lineWidth = 2;
-            ctx.strokeRect(-14, -15, 28, 38);
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(-16, -34, 32, 24);
-            ctx.fillStyle = '#38bdf8';
-            ctx.fillRect(2, -28, 8, 5);
-            if (ninja.isAttacking) {
-                ctx.strokeStyle = '#facc15';
-                ctx.lineWidth = 5;
-                ctx.beginPath();
-                ctx.moveTo(14, -5);
-                ctx.lineTo(38, -15);
-                ctx.stroke();
-            }
-            ctx.restore();
+            ctx.strokeRect(p.x, p.y, p.w, p.h);
         }
 
-        function gameLoop() {
-            if (gameState === 'PLAYING') {
-                update();
-                draw();
-                requestAnimationFrame(gameLoop);
+        for (var s = 0; s < spikes.length; s++) {
+            var sp = spikes[s];
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(sp.x, sp.y + 4, sp.w, sp.h - 4);
+        }
+
+        for (var en = 0; en < enemies.length; en++) {
+            var enemy = enemies[en];
+            ctx.fillStyle = '#b91c1c';
+            ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(enemy.x, enemy.y, enemy.w, enemy.h);
+        }
+
+        for (var j = 0; j < coins.length; j++) {
+            var c = coins[j];
+            if (!c.taken) {
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ca8a04';
+                ctx.lineWidth = 2;
+                ctx.stroke();
             }
         }
-    </script>
+
+        ctx.fillStyle = coinsCollected === 3 ? '#38bdf8' : '#334155';
+        ctx.fillRect(portal.x, portal.y, portal.w, portal.h);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(portal.x, portal.y, portal.w, portal.h);
+
+        // --- NINJA PERSONAJI (Odam gavdasi va Ninja uslubi) ---
+        ctx.save();
+        var px = player.x;
+        var py = player.y;
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(px + 4, py, 24, 18);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(px + 4, py, 24, 18);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(px + 2, py + 5, 28, 5);
+
+        ctx.fillStyle = '#facc15';
+        if (player.dir === 1) {
+            ctx.fillRect(px + 18, py + 7, 6, 3);
+        } else {
+            ctx.fillRect(px + 8, py + 7, 6, 3);
+        }
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(px + 6, py + 18, 20, 20);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(px + 6, py + 18, 20, 20);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(px + 6, py + 26, 20, 4);
+
+        ctx.fillStyle = '#0f172a';
+        var legOffset = Math.sin(player.animFrame) * 6;
+        if (!player.onGround) legOffset = 4;
+
+        ctx.fillRect(px + 7, py + 38, 7, 10 + (player.onGround ? legOffset : 0));
+        ctx.fillRect(px + 18, py + 38, 7, 10 - (player.onGround ? legOffset : 0));
+
+        ctx.restore();
+    }
+
+    function loop() {
+        if (!isPlaying) return;
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
+
+    initSeasonMenu();
+</script>
 </body>
 </html>
