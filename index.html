@@ -6,7 +6,7 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ninja Game - Haqiqiy Daraxtlar va Xitoycha Darvozalar</title>
+    <title>Ninja Game - Ninja Warrior Shop & Chiroyli Rasmlar</title>
     <style>
         * {
             box-sizing: border-box;
@@ -36,7 +36,7 @@ HTML
             border: 3px solid #38bdf8;
             border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
         }
         canvas {
             display: block;
@@ -46,41 +46,42 @@ HTML
         .screen {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(2, 6, 23, 0.96);
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
         .hidden { display: none !important; }
         h1 {
-            font-size: 2.2rem;
+            font-size: 1.9rem;
             font-weight: 900;
             letter-spacing: 2px;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            margin-bottom: 6px;
+            background: linear-gradient(to right, #38bdf8, #818cf8, #f43f5e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
         }
         p {
             color: #94a3b8;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
         }
         .btn {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
             border: 1px solid #3b82f6;
-            padding: 12px 30px;
-            font-size: 1.05rem;
+            padding: 8px 22px;
+            font-size: 0.95rem;
             font-weight: 800;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            margin: 6px;
+            margin: 4px;
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
             transition: 0.15s;
         }
@@ -92,19 +93,18 @@ HTML
             background: #334155;
             border-color: #475569;
             box-shadow: none;
-            width: 180px;
-            padding: 10px 20px;
-            font-size: 0.95rem;
+            padding: 6px 16px;
+            font-size: 0.85rem;
         }
         .top-back-btn {
             position: absolute;
-            top: 12px;
-            left: 15px;
+            top: 10px;
+            left: 12px;
             background: rgba(30, 41, 59, 0.9);
             border: 2px solid #38bdf8;
             color: #38bdf8;
-            padding: 6px 14px;
-            font-size: 0.9rem;
+            padding: 5px 12px;
+            font-size: 0.85rem;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -116,43 +116,56 @@ HTML
             color: #020617;
         }
 
+        .menu-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
         .season-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            max-width: 500px;
-            margin-bottom: 15px;
-            max-height: 280px;
+            gap: 8px;
+            max-width: 520px;
+            margin-bottom: 10px;
+            max-height: 240px;
             overflow-y: auto;
             padding: 5px;
         }
         .season-card {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.85);
             border: 2px solid #334155;
             border-radius: 12px;
-            padding: 12px 15px;
+            padding: 10px;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-align: left;
         }
-        .season-card:hover:not(.locked) {
-            border-color: #38bdf8;
-            transform: translateY(-2px);
-            background: #273549;
-        }
+        .season-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
         .season-card.locked {
             opacity: 0.5;
             cursor: not-allowed;
             border-color: #1e293b;
         }
+        .s-img {
+            width: 45px; height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #38bdf8;
+        }
         .s-title {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #38bdf8;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         .s-desc {
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             color: #94a3b8;
         }
 
@@ -161,27 +174,22 @@ HTML
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             max-width: 500px;
-            max-height: 240px;
+            max-height: 220px;
             overflow-y: auto;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             padding: 5px;
         }
         .level-btn {
             width: 75px;
-            height: 48px;
+            height: 44px;
             border-radius: 8px;
             background: #1e293b;
             border: 2px solid #38bdf8;
             color: #ffffff;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             transition: 0.15s;
-        }
-        .level-btn:hover:not(.locked) {
-            background: #38bdf8;
-            color: #020617;
-            transform: scale(1.05);
         }
         .level-btn.locked {
             background: #0f172a;
@@ -194,14 +202,76 @@ HTML
             background: #450a0a;
             color: #fca5a5;
         }
-        .boss-lvl-btn:hover:not(.locked) {
-            background: #f43f5e;
+
+        .shop-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .tab-btn {
+            background: #1e293b;
+            border: 2px solid #334155;
+            color: #94a3b8;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .tab-btn.active {
+            background: #2563eb;
+            border-color: #38bdf8;
             color: #ffffff;
         }
-        .boss-lvl-btn.locked {
-            background: #1a0505;
-            border-color: #331111;
-            color: #552222;
+
+        .shop-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            max-width: 540px;
+            max-height: 230px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            padding: 5px;
+        }
+        .shop-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+        .shop-card.owned { border-color: #4ade80; }
+        .shop-img {
+            width: 50px; height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid #38bdf8;
+            background: #020617;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 8px;
+            max-width: 450px;
+            max-height: 240px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        .ach-item {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
         }
 
         #hud {
@@ -211,14 +281,12 @@ HTML
             justify-content: space-between;
             align-items: center;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #facc15;
             pointer-events: none;
             z-index: 5;
         }
-        #hud button {
-            pointer-events: auto;
-        }
+        #hud button { pointer-events: auto; }
         #bossHint {
             position: absolute;
             top: 44px;
@@ -229,11 +297,28 @@ HTML
             color: #fef08a;
             padding: 4px 14px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: bold;
             z-index: 5;
             pointer-events: none;
             white-space: nowrap;
+        }
+        #abilityBar {
+            position: absolute;
+            top: 72px;
+            left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+        .ab-badge {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
         }
         #controls {
             position: absolute;
@@ -244,12 +329,12 @@ HTML
         }
         .ctrl-group { display: flex; gap: 8px; }
         .c-btn {
-            width: 50px; height: 50px;
+            width: 48px; height: 48px;
             border-radius: 50%;
             background: rgba(30, 41, 59, 0.85);
             border: 2px solid #38bdf8;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -268,22 +353,50 @@ HTML
 <body>
 
 <div id="gameBox">
-    <!-- 1. Mavsumlar menyusi -->
-    <div id="seasonMenu" class="screen">
+    <div id="mainMenu" class="screen">
         <h1>NINJA GAME</h1>
-        <p>Haqiqiy daraxtlar fonida va Xitoycha darvozalar orqali sarguzasht!</p>
+        <p>Professional Ninja Warrior Do'koni va Sarguzashtlar!</p>
+        <div class="menu-btn-group">
+            <button type="button" class="btn" onclick="openSeasonMenu()">O'YINNI BOSHLASH</button>
+            <button type="button" class="btn btn-secondary" onclick="openShop()">🛒 NINJA DO'KONI</button>
+            <button type="button" class="btn btn-secondary" onclick="openAchievements()">🏆 YUTUQLAR</button>
+        </div>
+    </div>
+
+    <div id="seasonMenu" class="screen hidden">
+        <button type="button" class="top-back-btn" onclick="backToMainMenu()">◀ MENYU</button>
+        <h1 style="font-size: 1.5rem; margin-top: 25px; margin-bottom: 4px;">MAVSUMLAR</h1>
+        <p>10 ta qiziqarli sarguzasht mavsumi</p>
         <div class="season-grid" id="seasonGrid"></div>
     </div>
 
-    <!-- 2. Bosqichlar menyusi -->
     <div id="levelMenu" class="screen hidden">
         <button type="button" class="top-back-btn" onclick="backToSeasons()">◀ MAVSUMLAR</button>
-        <h1 id="levelMenuTitle" style="font-size: 1.6rem; margin-top: 35px; margin-bottom: 5px;">BOSQICHNI TANLANG</h1>
-        <p id="levelMenuDesc">O'tilgan bosqichlargina ochiq bo'ladi!</p>
+        <h1 id="levelMenuTitle" style="font-size: 1.4rem; margin-top: 25px; margin-bottom: 3px;">BOSQICH</h1>
+        <p id="levelMenuDesc">O'tilgan bosqichlargina ochiq!</p>
         <div class="level-grid" id="levelGrid"></div>
     </div>
 
-    <!-- 3. G'alaba ekrani -->
+    <div id="shopScreen" class="screen hidden">
+        <button type="button" class="top-back-btn" onclick="backToMainMenu()">◀ MENYU</button>
+        <h1 style="font-size: 1.5rem; margin-top: 25px; margin-bottom: 3px;">NINJA DO'KONI 🛒</h1>
+        <p id="shopCoinsText" style="color: #facc15; font-weight: bold; margin-bottom: 6px;">Umumiy Oltinlar: 0</p>
+        
+        <div class="shop-tabs">
+            <button type="button" id="tabNinjaBtn" class="tab-btn active" onclick="switchShopTab('ninjas')">🥷 NINJALAR</button>
+            <button type="button" id="tabUpgradeBtn" class="tab-btn" onclick="switchShopTab('upgrades')">⚡ KUCHAYTIRGICHLAR</button>
+        </div>
+
+        <div class="shop-container" id="shopContainer"></div>
+    </div>
+
+    <div id="achievementScreen" class="screen hidden">
+        <button type="button" class="top-back-btn" onclick="backToMainMenu()">◀ MENYU</button>
+        <h1 style="font-size: 1.5rem; margin-top: 25px; margin-bottom: 4px;">YUTUQLAR 🏆</h1>
+        <p>O'yindagi yutuqlaringiz va mukofotlar</p>
+        <div class="achievement-grid" id="achievementGrid"></div>
+    </div>
+
     <div id="winScreen" class="screen hidden">
         <h1 style="color: #4ade80;" id="winTitle">BOSQICH YAKUNLANDI!</h1>
         <p id="winDesc">Tabriklayman! Keyingi bosqich ochildi.</p>
@@ -291,7 +404,6 @@ HTML
         <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA</button>
     </div>
 
-    <!-- 4. Game Over ekrani -->
     <div id="gameoverScreen" class="screen hidden">
         <h1 style="color: #ef4444;">YUTQAZDINGIZ! 💀</h1>
         <p>So'nggi Checkpoint bayrog'idan qayta tug'ildingiz!</p>
@@ -299,7 +411,6 @@ HTML
         <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA QAYTISH</button>
     </div>
 
-    <!-- HUD -->
     <div id="hud" class="hidden">
         <button type="button" class="top-back-btn" onclick="backToLevelMenu()" style="position: static; padding: 4px 10px; font-size: 0.8rem;">◀ MENYU</button>
         <span id="hudLevelText">1-MAVSUM | 1-BOSQICH</span>
@@ -307,10 +418,13 @@ HTML
         <span id="hudCoinText">OLTINLAR: 0 / 5</span>
     </div>
 
-    <!-- Boss maslahati -->
     <div id="bossHint" class="hidden"></div>
 
-    <!-- Touch tugmalar -->
+    <div id="abilityBar" class="hidden">
+        <span class="ab-badge" id="abDash">⚡ Tezlik (F): Tayyor</span>
+        <span class="ab-badge" id="abShield">🛡️ Qalqon (R): Tayyor</span>
+    </div>
+
     <div id="controls" class="hidden">
         <div class="ctrl-group">
             <button type="button" class="c-btn" id="btnLeft">◀</button>
@@ -327,26 +441,98 @@ HTML
 </div>
 
 <script>
+    var audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            var now = audioCtx.currentTime;
+
+            if (type === 'jump') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'coin') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(587.33, now);
+                osc.frequency.setValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'sword') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'shuriken') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'hit') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(100, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        } catch(e) {}
+    }
+
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
 
+    var mainMenu = document.getElementById('mainMenu');
     var seasonMenu = document.getElementById('seasonMenu');
     var levelMenu = document.getElementById('levelMenu');
+    var shopScreen = document.getElementById('shopScreen');
+    var achievementScreen = document.getElementById('achievementScreen');
     var winScreen = document.getElementById('winScreen');
     var gameoverScreen = document.getElementById('gameoverScreen');
     var hud = document.getElementById('hud');
     var bossHint = document.getElementById('bossHint');
+    var abilityBar = document.getElementById('abilityBar');
     var controls = document.getElementById('controls');
     var seasonGrid = document.getElementById('seasonGrid');
     var levelGrid = document.getElementById('levelGrid');
+    var shopContainer = document.getElementById('shopContainer');
+    var achievementGrid = document.getElementById('achievementGrid');
     var levelMenuTitle = document.getElementById('levelMenuTitle');
     var levelMenuDesc = document.getElementById('levelMenuDesc');
     var hudLevelText = document.getElementById('hudLevelText');
     var hudLivesText = document.getElementById('hudLivesText');
     var hudCoinText = document.getElementById('hudCoinText');
+    var shopCoinsText = document.getElementById('shopCoinsText');
     var winTitle = document.getElementById('winTitle');
     var winDesc = document.getElementById('winDesc');
     var nextLevelBtn = document.getElementById('nextLevelBtn');
+    var abDash = document.getElementById('abDash');
+    var abShield = document.getElementById('abShield');
+    var tabNinjaBtn = document.getElementById('tabNinjaBtn');
+    var tabUpgradeBtn = document.getElementById('tabUpgradeBtn');
 
     var isPlaying = false;
     var currentSeason = 1;
@@ -355,12 +541,108 @@ HTML
     var coinsCollected = 0;
     var totalCoinsInLevel = 5;
     var lives = 3;
+    var totalGlobalCoins = parseInt(localStorage.getItem('ninjaTotalCoins')) || 0;
 
     var worldWidth = 2400;
     var cameraX = 0;
 
     var savedMaxLevel = parseInt(localStorage.getItem('ninjaMaxUnlockedLevel')) || 1;
     var savedMaxSeason = parseInt(localStorage.getItem('ninjaMaxUnlockedSeason')) || 1;
+
+    var seasonsMeta = [
+        { name: "1. Tungi Bahor", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop&q=80", bg1: "#064e3b", bg2: "#022c22", particle: "leaf", treeColor: "#15803d", trunkColor: "#451a03", platTop: "#4ade80", platBody: "#166534" },
+        { name: "2. Yorqin Yoz", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&auto=format&fit=crop&q=80", bg1: "#1e3a8a", bg2: "#0f172a", particle: "firefly", treeColor: "#1e40af", trunkColor: "#1e293b", platTop: "#60a5fa", platBody: "#1e40af" },
+        { name: "3. Oltin Kuz", img: "https://images.unsplash.com/photo-1507783590520-4a44f844249a?w=300&auto=format&fit=crop&q=80", bg1: "#78350f", bg2: "#451a03", particle: "fallLeaf", treeColor: "#b45309", trunkColor: "#292524", platTop: "#fbbf24", platBody: "#92400e" },
+        { name: "4. Qorli Qish", img: "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=300&auto=format&fit=crop&q=80", bg1: "#1e293b", bg2: "#090d16", particle: "snow", treeColor: "#cbd5e1", trunkColor: "#334155", platTop: "#ffffff", platBody: "#334155" },
+        { name: "5. Sakura Guli", img: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=300&auto=format&fit=crop&q=80", bg1: "#581c87", bg2: "#2e1065", particle: "petal", treeColor: "#f472b6", trunkColor: "#3b0764", platTop: "#f472b6", platBody: "#6b21a8" },
+        { name: "6. Tungi Tuman", img: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=300&auto=format&fit=crop&q=80", bg1: "#312e81", bg2: "#1e1b4b", particle: "fog", treeColor: "#3730a3", trunkColor: "#1e1b4b", platTop: "#818cf8", platBody: "#312e81" },
+        { name: "7. Cho'l Quyoshi", img: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=300&auto=format&fit=crop&q=80", bg1: "#78716c", bg2: "#292524", particle: "dust", treeColor: "#a8a29e", trunkColor: "#44403c", platTop: "#d7d3cb", platBody: "#57534e" },
+        { name: "8. Vulqon Olovi", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=300&auto=format&fit=crop&q=80", bg1: "#7f1d1d", bg2: "#450a0a", particle: "ember", treeColor: "#991b1b", trunkColor: "#262626", platTop: "#f87171", platBody: "#991b1b" },
+        { name: "9. Elektr Storm", img: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=300&auto=format&fit=crop&q=80", bg1: "#172554", bg2: "#030712", particle: "spark", treeColor: "#1e40af", trunkColor: "#020617", platTop: "#facc15", platBody: "#1e3a8a" },
+        { name: "10. Kosmik Ajdaho", img: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=300&auto=format&fit=crop&q=80", bg1: "#3b0764", bg2: "#090214", particle: "star", treeColor: "#c084fc", trunkColor: "#1e1b4b", platTop: "#e879f9", platBody: "#581c87" }
+    ];
+
+    var currentShopTab = 'ninjas';
+
+    var ninjaCharacters = [
+        { id: 'ninja_blue', name: "Moviy Ko'z Ninja", cost: 0, owned: true, color: '#38bdf8', speedBonus: 0, jumpBonus: 0, img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=150&auto=format&fit=crop&q=80" },
+        { id: 'ninja_gold', name: "Oltin Legend Ninja", cost: 25, owned: localStorage.getItem('ninja_gold') === 'true', color: '#facc15', speedBonus: 0.5, jumpBonus: 0, img: "https://images.unsplash.com/photo-1563089145-599997674d42?w=150&auto=format&fit=crop&q=80" },
+        { id: 'ninja_red', name: "Qonli Axsura Ninja", cost: 45, owned: localStorage.getItem('ninja_red') === 'true', color: '#ef4444', speedBonus: 1.0, jumpBonus: -0.5, img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=150&auto=format&fit=crop&q=80" },
+        { id: 'ninja_purple', name: "Kabisa Shadow Ninja", cost: 70, owned: localStorage.getItem('ninja_purple') === 'true', color: '#c084fc', speedBonus: 1.0, jumpBonus: -1.0, img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=150&auto=format&fit=crop&q=80" }
+    ];
+    var equippedNinjaId = localStorage.getItem('ninjaEquippedId') || 'ninja_blue';
+
+    var upgradeItems = [
+        { id: 'up_speed', name: "Tezlikni Oshirish", cost: 15, level: parseInt(localStorage.getItem('up_speed_lvl')) || 0, maxLevel: 3, desc: "Yugurish tezligini oshiradi", img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=150&auto=format&fit=crop&q=80" },
+        { id: 'up_jump', name: "Baland Sakrash", cost: 20, level: parseInt(localStorage.getItem('up_jump_lvl')) || 0, maxLevel: 3, desc: "Sakrash kuchini oshiradi", img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=150&auto=format&fit=crop&q=80" },
+        { id: 'up_life', name: "Qo'shimcha Jon", cost: 50, level: parseInt(localStorage.getItem('up_life_lvl')) || 0, maxLevel: 1, desc: "Boshlang'ich jonni 4 taga chiqaradi", img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=150&auto=format&fit=crop&q=80" }
+    ];
+
+    function getPlayerSpeed() {
+        var base = 5.5;
+        var nObj = ninjaCharacters.find(function(n){ return n.id === equippedNinjaId; });
+        if (nObj) base += nObj.speedBonus;
+        var spdUp = upgradeItems.find(function(u){ return u.id === 'up_speed'; });
+        if (spdUp) base += spdUp.level * 0.6;
+        return base;
+    }
+
+    function getPlayerJump() {
+        var base = -11.5;
+        var nObj = ninjaCharacters.find(function(n){ return n.id === equippedNinjaId; });
+        if (nObj) base += nObj.jumpBonus;
+        var jmpUp = upgradeItems.find(function(u){ return u.id === 'up_jump'; });
+        if (jmpUp) base -= jmpUp.level * 0.8;
+        return base;
+    }
+
+    function getMaxLives() {
+        var lifeUp = upgradeItems.find(function(u){ return u.id === 'up_life'; });
+        return (lifeUp && lifeUp.level > 0) ? 4 : 3;
+    }
+
+    var achievements = [
+        { id: 'ach_first_lvl', name: "Birinchi Qadam", desc: "1-bosqichni muvaffaqiyatli yakunlang", unlocked: localStorage.getItem('ach_first_lvl') === 'true' },
+        { id: 'ach_first_boss', name: "Shogun Yenguvchisi", desc: "1-mavsum bossini mag'lub eting", unlocked: localStorage.getItem('ach_first_boss') === 'true' },
+        { id: 'ach_rich', name: "Boy Ninja", desc: "Jami 30 ta oltin yig'ing", unlocked: localStorage.getItem('ach_rich') === 'true' },
+        { id: 'ach_master', name: "Master Ninja", desc: "Barcha 10 ta mavsumni yakunlang", unlocked: localStorage.getItem('ach_master') === 'true' }
+    ];
+
+    function checkAchievements() {
+        if (savedMaxLevel > 1 && !achievements[0].unlocked) {
+            achievements[0].unlocked = true;
+            localStorage.setItem('ach_first_lvl', 'true');
+        }
+        if (savedMaxSeason > 1 && !achievements[1].unlocked) {
+            achievements[1].unlocked = true;
+            localStorage.setItem('ach_first_boss', 'true');
+        }
+        if (totalGlobalCoins >= 30 && !achievements[2].unlocked) {
+            achievements[2].unlocked = true;
+            localStorage.setItem('ach_rich', 'true');
+        }
+        if (savedMaxSeason >= 10 && savedMaxLevel >= 150 && !achievements[3].unlocked) {
+            achievements[3].unlocked = true;
+            localStorage.setItem('ach_master', 'true');
+        }
+    }
+
+    var abilityCooldowns = { dash: 0, shield: 0 };
+    var activeShieldTimer = 0;
+
+    function useDash() {
+        if (!isPlaying || abilityCooldowns.dash > 0) return;
+        player.vx = player.dir * 14;
+        abilityCooldowns.dash = 180;
+        playSound('shuriken');
+    }
+
+    function useShield() {
+        if (!isPlaying || abilityCooldowns.shield > 0) return;
+        activeShieldTimer = 120;
+        abilityCooldowns.shield = 300;
+        playSound('coin');
+    }
 
     function saveProgress(clearedSeason, clearedLevel) {
         var clearedGlobal = getGlobalId(clearedSeason, clearedLevel);
@@ -381,12 +663,12 @@ HTML
                 localStorage.setItem('ninjaMaxUnlockedSeason', savedMaxSeason);
             }
         }
+        checkAchievements();
     }
 
     var player = {
         x: 60, y: 300, w: 32, h: 48,
-        vx: 0, vy: 0, speed: 5.5, jump: -11.5,
-        onGround: false, jumpCount: 0, maxJumps: 2,
+        vx: 0, vy: 0, onGround: false, jumpCount: 0, maxJumps: 2,
         dir: 1, animFrame: 0,
         isAttacking: false, attackTimer: 0,
         doubleJumpEffect: 0
@@ -401,33 +683,19 @@ HTML
 
     var seasonCounts = [5, 10, 10, 15, 15, 20, 20, 25, 25, 30];
 
-    // --- MAVSUM METADATA VA FONLAR ---
-    var seasonsMeta = [
-        { name: "1. Bahor (Barglar)", bg1: "#064e3b", bg2: "#022c22", particle: "leaf", treeColor: "#15803d", trunkColor: "#451a03" },
-        { name: "2. Yoz (Yorqin Quyosh)", bg1: "#1e3a8a", bg2: "#0f172a", particle: "firefly", treeColor: "#1e40af", trunkColor: "#1e293b" },
-        { name: "3. Kuz (Sariq Yaproqlar)", bg1: "#78350f", bg2: "#451a03", particle: "fallLeaf", treeColor: "#b45309", trunkColor: "#292524" },
-        { name: "4. Qish (Qor Bo'roni)", bg1: "#1e293b", bg2: "#090d16", particle: "snow", treeColor: "#cbd5e1", trunkColor: "#334155" },
-        { name: "5. Sakura (Pushti Gullar)", bg1: "#581c87", bg2: "#2e1065", particle: "petal", treeColor: "#f472b6", trunkColor: "#3b0764" },
-        { name: "6. Tungi Tuman", bg1: "#312e81", bg2: "#1e1b4b", particle: "fog", treeColor: "#3730a3", trunkColor: "#1e1b4b" },
-        { name: "7. Cho'l va Quyosh", bg1: "#78716c", bg2: "#292524", particle: "dust", treeColor: "#a8a29e", trunkColor: "#44403c" },
-        { name: "8. Vulqon va Olov", bg1: "#7f1d1d", bg2: "#450a0a", particle: "ember", treeColor: "#991b1b", trunkColor: "#262626" },
-        { name: "9. Elektr Storm", bg1: "#172554", bg2: "#030712", particle: "spark", treeColor: "#1e40af", trunkColor: "#020617" },
-        { name: "10. Kosmik / Ajdaho", bg1: "#3b0764", bg2: "#090214", particle: "star", treeColor: "#c084fc", trunkColor: "#1e1b4b" }
-    ];
-
     var particles = [];
     function initParticles(seasonIdx) {
         particles = [];
         var type = seasonsMeta[seasonIdx - 1].particle;
-        for (var i = 0; i < 45; i++) {
+        for (var i = 0; i < 40; i++) {
             particles.push({
                 x: Math.random() * 3000,
                 y: Math.random() * 450,
                 vx: (type === 'snow' ? (Math.random() - 0.5) * 1 : (type === 'fallLeaf' ? 1 + Math.random() * 2 : (Math.random() - 0.5) * 2)),
                 vy: (type === 'snow' ? 1 + Math.random() * 2 : (type === 'fallLeaf' ? 0.8 + Math.random() * 1.5 : (Math.random() - 0.5) * 1.5)),
-                size: 2 + Math.random() * 4,
-                color: (type === 'spring' ? '#4ade80' : (type === 'fallLeaf' ? '#fb923c' : (type === 'snow' ? '#ffffff' : (type === 'petal' ? '#f472b6' : '#facc15')))),
-                alpha: 0.3 + Math.random() * 0.7
+                size: 2 + Math.random() * 3,
+                color: (type === 'snow' ? '#ffffff' : '#facc15'),
+                alpha: 0.3 + Math.random() * 0.5
             });
         }
     }
@@ -458,7 +726,7 @@ HTML
         var platforms = [];
         var isBossLevel = (lIndex === seasonCounts[sIndex - 1]);
 
-        platforms.push({ x: 30, y: 375, w: 140, h: 16 });
+        platforms.push({ x: 30, y: 375, w: 140, h: 22 });
 
         var stepCount = 12 + (sIndex - 1) * 2 + Math.floor((lIndex - 1) / 2);
         if (stepCount > 32) stepCount = 32;
@@ -477,7 +745,7 @@ HTML
             if (nextY < 140) nextY = 155 + ((i * 13) % 35);
             if (nextY > 380) nextY = 350 - ((i * 13) % 40);
 
-            platforms.push({ x: nextX, y: nextY, w: pw, h: 16 });
+            platforms.push({ x: nextX, y: nextY, w: pw, h: 22 });
             currentX = nextX;
             currentY = nextY;
         }
@@ -487,10 +755,10 @@ HTML
             var arenaX = currentX + 145;
             var arenaY = 365;
             var arenaW = 460;
-            platforms.push({ x: arenaX, y: arenaY, w: arenaW, h: 20 });
+            platforms.push({ x: arenaX, y: arenaY, w: arenaW, h: 24 });
 
-            platforms.push({ x: arenaX + 40, y: 255, w: 110, h: 14 });
-            platforms.push({ x: arenaX + 310, y: 255, w: 110, h: 14 });
+            platforms.push({ x: arenaX + 40, y: 255, w: 110, h: 18 });
+            platforms.push({ x: arenaX + 310, y: 255, w: 110, h: 18 });
 
             currentX = arenaX + arenaW - 100;
             currentY = arenaY;
@@ -619,10 +887,24 @@ HTML
     var portal = {};
     var input = { left: false, right: false };
 
+    function openSeasonMenu() {
+        mainMenu.classList.add('hidden');
+        seasonMenu.classList.remove('hidden');
+        initSeasonMenu();
+    }
+
+    function backToMainMenu() {
+        seasonMenu.classList.add('hidden');
+        levelMenu.classList.add('hidden');
+        shopScreen.classList.add('hidden');
+        achievementScreen.classList.add('hidden');
+        bossHint.classList.add('hidden');
+        mainMenu.classList.remove('hidden');
+    }
+
     function initSeasonMenu() {
         seasonGrid.innerHTML = '';
         for (var s = 1; s <= 10; s++) {
-            var count = seasonCounts[s - 1];
             var seasonInfo = seasonsMeta[s - 1];
             var bInfo = seasonBossData[s - 1];
             var card = document.createElement('div');
@@ -631,9 +913,9 @@ HTML
             var isSeasonUnlocked = (s <= savedMaxSeason);
             if (!isSeasonUnlocked) {
                 card.classList.add('locked');
-                card.innerHTML = '<div class="s-title" style="color:#64748b;">' + seasonInfo.name + ' 🔒</div><div class="s-desc">Oldingi mavsum tugatilmagan!</div>';
+                card.innerHTML = '<img src="' + seasonInfo.img + '" class="s-img" style="filter:grayscale(100%);"><div><div class="s-title" style="color:#64748b;">' + seasonInfo.name + ' 🔒</div><div class="s-desc">Qulflangan</div></div>';
             } else {
-                card.innerHTML = '<div class="s-title">' + seasonInfo.name + '</div><div class="s-desc">👹 Boss: <b>' + bInfo.name + '</b></div>';
+                card.innerHTML = '<img src="' + seasonInfo.img + '" class="s-img"><div><div class="s-title">' + seasonInfo.name + '</div><div class="s-desc">👹 Boss: <b>' + bInfo.name + '</b></div></div>';
                 
                 (function(seasonNum) {
                     card.onclick = function() {
@@ -679,7 +961,7 @@ HTML
 
                 (function(lvlIdx) {
                     btn.onclick = function() {
-                        lives = 3;
+                        lives = getMaxLives();
                         startSeasonLevel(seasonNum, lvlIdx);
                     };
                 })(l);
@@ -701,10 +983,151 @@ HTML
         gameoverScreen.classList.add('hidden');
         hud.classList.add('hidden');
         bossHint.classList.add('hidden');
+        abilityBar.classList.add('hidden');
         controls.classList.add('hidden');
         levelMenu.classList.remove('hidden');
         isPlaying = false;
         openSeasonLevels(currentSeason);
+    }
+
+    function switchShopTab(tabName) {
+        currentShopTab = tabName;
+        if (tabName === 'ninjas') {
+            tabNinjaBtn.classList.add('active');
+            tabUpgradeBtn.classList.remove('active');
+        } else {
+            tabUpgradeBtn.classList.add('active');
+            tabNinjaBtn.classList.remove('active');
+        }
+        renderShopItems();
+    }
+
+    function openShop() {
+        mainMenu.classList.add('hidden');
+        shopScreen.classList.remove('hidden');
+        shopCoinsText.innerText = "Umumiy Oltinlar: " + totalGlobalCoins + " 🪙";
+        switchShopTab('ninjas');
+    }
+
+    function renderShopItems() {
+        shopCoinsText.innerText = "Umumiy Oltinlar: " + totalGlobalCoins + " 🪙";
+        shopContainer.innerHTML = '';
+
+        if (currentShopTab === 'ninjas') {
+            for (var i = 0; i < ninjaCharacters.length; i++) {
+                var ninja = ninjaCharacters[i];
+                var card = document.createElement('div');
+                card.className = 'shop-card' + (ninja.owned ? ' owned' : '');
+                
+                card.innerHTML = '<img src="' + ninja.img + '" class="shop-img">' +
+                                 '<div style="flex:1;">' +
+                                 '<b style="color:' + ninja.color + '; font-size:0.85rem;">' + ninja.name + '</b><br>' +
+                                 '<small style="color:#94a3b8; font-size:0.7rem;">Tezlik: +' + ninja.speedBonus + '</small><br>';
+
+                var actionBtn = document.createElement('button');
+                actionBtn.type = 'button';
+                actionBtn.className = 'btn';
+                actionBtn.style.padding = '3px 10px';
+                actionBtn.style.fontSize = '0.75rem';
+                actionBtn.style.marginTop = '4px';
+
+                if (ninja.owned) {
+                    if (equippedNinjaId === ninja.id) {
+                        actionBtn.innerText = "Kiyilgan 👑";
+                        actionBtn.disabled = true;
+                        actionBtn.style.background = "#1e293b";
+                    } else {
+                        actionBtn.innerText = "Kiyish";
+                        actionBtn.onclick = (function(nId) {
+                            return function() {
+                                equippedNinjaId = nId;
+                                localStorage.setItem('ninjaEquippedId', equippedNinjaId);
+                                renderShopItems();
+                            };
+                        })(ninja.id);
+                    }
+                } else {
+                    actionBtn.innerText = "Sotib olish (" + ninja.cost + " 🪙)";
+                    actionBtn.onclick = (function(n) {
+                        return function() {
+                            if (totalGlobalCoins >= n.cost) {
+                                totalGlobalCoins -= n.cost;
+                                n.owned = true;
+                                localStorage.setItem('ninjaTotalCoins', totalGlobalCoins);
+                                localStorage.setItem('ninja_' + n.id, 'true');
+                                equippedNinjaId = n.id;
+                                localStorage.setItem('ninjaEquippedId', equippedNinjaId);
+                                renderShopItems();
+                            } else {
+                                alert("Oltinlar yetarli emas!");
+                            }
+                        };
+                    })(ninja);
+                }
+                card.innerHTML += '</div>';
+                card.lastChild.appendChild(actionBtn);
+                shopContainer.appendChild(card);
+            }
+        } else {
+            for (var u = 0; u < upgradeItems.length; u++) {
+                var up = upgradeItems[u];
+                var uCard = document.createElement('div');
+                uCard.className = 'shop-card' + (up.level >= up.maxLevel ? ' owned' : '');
+
+                var costNow = up.cost * (up.level + 1);
+                uCard.innerHTML = '<img src="' + up.img + '" class="shop-img">' +
+                                  '<div style="flex:1;">' +
+                                  '<b style="color:#38bdf8; font-size:0.85rem;">' + up.name + '</b><br>' +
+                                  '<small style="color:#94a3b8; font-size:0.7rem;">Daraja: ' + up.level + ' / ' + up.maxLevel + '</small><br>';
+
+                var upBtn = document.createElement('button');
+                upBtn.type = 'button';
+                upBtn.className = 'btn';
+                upBtn.style.padding = '3px 10px';
+                upBtn.style.fontSize = '0.75rem';
+                upBtn.style.marginTop = '4px';
+
+                if (up.level >= up.maxLevel) {
+                    upBtn.innerText = "Maksimal ⭐";
+                    upBtn.disabled = true;
+                    upBtn.style.background = "#1e293b";
+                } else {
+                    upBtn.innerText = "Yangilash (" + costNow + " 🪙)";
+                    upBtn.onclick = (function(item) {
+                        return function() {
+                            var cNow = item.cost * (item.level + 1);
+                            if (totalGlobalCoins >= cNow) {
+                                totalGlobalCoins -= cNow;
+                                item.level++;
+                                localStorage.setItem('ninjaTotalCoins', totalGlobalCoins);
+                                localStorage.setItem(item.id + '_lvl', item.level);
+                                renderShopItems();
+                            } else {
+                                alert("Oltinlar yetarli emas!");
+                            }
+                        };
+                    })(up);
+                }
+                uCard.innerHTML += '</div>';
+                uCard.lastChild.appendChild(upBtn);
+                shopContainer.appendChild(uCard);
+            }
+        }
+    }
+
+    function openAchievements() {
+        mainMenu.classList.add('hidden');
+        achievementScreen.classList.remove('hidden');
+        checkAchievements();
+        achievementGrid.innerHTML = '';
+
+        for (var a = 0; a < achievements.length; a++) {
+            var ach = achievements[a];
+            var div = document.createElement('div');
+            div.className = 'ach-item';
+            div.innerHTML = '<div><b style="color:' + (ach.unlocked ? '#4ade80' : '#94a3b8') + '">' + (ach.unlocked ? '✅ ' : '🔒 ') + ach.name + '</b><br><small>' + ach.desc + '</small></div>';
+            achievementGrid.appendChild(div);
+        }
     }
 
     function startSeasonLevel(seasonNum, levelIndex) {
@@ -759,6 +1182,7 @@ HTML
         winScreen.classList.add('hidden');
         gameoverScreen.classList.add('hidden');
         hud.classList.remove('hidden');
+        abilityBar.classList.remove('hidden');
         controls.classList.remove('hidden');
 
         if (boss) {
@@ -797,11 +1221,15 @@ HTML
         for (var h = 0; h < lives; h++) hearts += "💖";
         hudLivesText.innerText = "JONLAR: " + hearts;
         hudCoinText.innerText = "OLTINLAR: " + coinsCollected + " / " + totalCoinsInLevel;
+
+        abDash.innerText = abilityCooldowns.dash <= 0 ? "⚡ Tezlik (F): Tayyor" : "⚡ Tezlik: " + Math.ceil(abilityCooldowns.dash / 60) + "s";
+        abShield.innerText = abilityCooldowns.shield <= 0 ? "🛡️ Qalqon (R): Tayyor" : "🛡️ Qalqon: " + Math.ceil(abilityCooldowns.shield / 60) + "s";
     }
 
     function respawnAtCheckpoint() {
         gameoverScreen.classList.add('hidden');
         hud.classList.remove('hidden');
+        abilityBar.classList.remove('hidden');
         controls.classList.remove('hidden');
 
         player.x = activeCheckpoint.x;
@@ -823,7 +1251,13 @@ HTML
     }
 
     function loseLifeOrDie() {
+        if (activeShieldTimer > 0) {
+            activeShieldTimer = 0;
+            playSound('hit');
+            return;
+        }
         lives--;
+        playSound('hit');
         updateHUD();
         if (lives > 0) {
             isPlaying = false;
@@ -834,24 +1268,27 @@ HTML
             isPlaying = false;
             hud.classList.add('hidden');
             bossHint.classList.add('hidden');
+            abilityBar.classList.add('hidden');
             controls.classList.add('hidden');
             gameoverScreen.classList.remove('hidden');
         }
     }
 
     function restartGame() {
-        lives = 3;
+        lives = getMaxLives();
         startSeasonLevel(currentSeason, currentLevelIndex);
     }
 
     function doJump() {
         if (!isPlaying) return;
+        playSound('jump');
+        var jmpVal = getPlayerJump();
         if (player.onGround) {
-            player.vy = player.jump;
+            player.vy = jmpVal;
             player.onGround = false;
             player.jumpCount = 1;
         } else if (player.jumpCount < player.maxJumps) {
-            player.vy = player.jump * 1.25;
+            player.vy = jmpVal * 1.25;
             player.jumpCount = 2;
             player.doubleJumpEffect = 14;
         }
@@ -859,28 +1296,14 @@ HTML
 
     function damageBoss(attackSourceX, damageAmount) {
         if (!boss || boss.hp <= 0) return;
-
-        var hitFromBehind = false;
-        var bossCenter = boss.x + boss.w / 2;
-
-        if (boss.season === 1 || boss.season === 3 || boss.season === 6) {
-            if (boss.dir === -1 && attackSourceX > bossCenter) hitFromBehind = true;
-            else if (boss.dir === 1 && attackSourceX < bossCenter) hitFromBehind = true;
-        } else {
-            hitFromBehind = true;
-        }
-
-        if (hitFromBehind) {
-            boss.hp -= damageAmount;
-            boss.hurtTimer = 12;
-            if (boss.hp <= 0) {
-                boss.hp = 0;
-                bossHint.innerText = "✅ " + boss.name.toUpperCase() + " YENGILDI! Xitoycha darvozaga kiring!";
-                bossHint.style.background = "rgba(21, 128, 61, 0.9)";
-                bossHint.style.borderColor = "#4ade80";
-            }
-        } else {
-            boss.shieldFlash = 14;
+        boss.hp -= damageAmount;
+        boss.hurtTimer = 12;
+        playSound('sword');
+        if (boss.hp <= 0) {
+            boss.hp = 0;
+            bossHint.innerText = "✅ " + boss.name.toUpperCase() + " YENGILDI! Xitoycha darvozaga kiring!";
+            bossHint.style.background = "rgba(21, 128, 61, 0.9)";
+            bossHint.style.borderColor = "#4ade80";
         }
     }
 
@@ -888,6 +1311,7 @@ HTML
         if (!isPlaying) return;
         player.isAttacking = true;
         player.attackTimer = 15;
+        playSound('sword');
 
         var swordBox = {
             x: player.dir === 1 ? player.x + player.w : player.x - 42,
@@ -914,6 +1338,7 @@ HTML
 
     function throwShuriken() {
         if (!isPlaying) return;
+        playSound('shuriken');
         shurikens.push({
             x: player.dir === 1 ? player.x + player.w : player.x - 16,
             y: player.y + 20,
@@ -953,6 +1378,8 @@ HTML
         if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') doJump();
         if (e.code === 'KeyQ') swordAttack();
         if (e.code === 'KeyE') throwShuriken();
+        if (e.code === 'KeyF') useDash();
+        if (e.code === 'KeyR') useShield();
     });
 
     window.addEventListener('keyup', function(e) {
@@ -977,12 +1404,17 @@ HTML
     btnShuriken.onclick = btnShuriken.ontouchstart = function(e) { e.preventDefault(); throwShuriken(); };
 
     function update() {
+        if (abilityCooldowns.dash > 0) abilityCooldowns.dash--;
+        if (abilityCooldowns.shield > 0) abilityCooldowns.shield--;
+        if (activeShieldTimer > 0) activeShieldTimer--;
+
+        var currentSpd = getPlayerSpeed();
         if (input.left) {
-            player.vx = -player.speed;
+            player.vx = -currentSpd;
             player.dir = -1;
             player.animFrame += 0.25;
         } else if (input.right) {
-            player.vx = player.speed;
+            player.vx = currentSpd;
             player.dir = 1;
             player.animFrame += 0.25;
         } else {
@@ -1066,6 +1498,7 @@ HTML
                     sh.y < en.y + en.h && sh.y + sh.h > en.y) {
                     enemies.splice(e, 1);
                     hitTarget = true;
+                    playSound('sword');
                     break;
                 }
             }
@@ -1191,7 +1624,6 @@ HTML
             boss.x += boss.speed * boss.dir;
             boss.animFrame += 0.18;
             if (boss.hurtTimer > 0) boss.hurtTimer--;
-            if (boss.shieldFlash > 0) boss.shieldFlash--;
 
             if (boss.x >= boss.maxX) {
                 boss.x = boss.maxX;
@@ -1253,6 +1685,10 @@ HTML
                 if (Math.hypot(dx, dy) < 28) {
                     c.taken = true;
                     coinsCollected++;
+                    totalGlobalCoins++;
+                    localStorage.setItem('ninjaTotalCoins', totalGlobalCoins);
+                    playSound('coin');
+                    checkAchievements();
                     updateHUD();
                 }
             }
@@ -1268,13 +1704,14 @@ HTML
 
                 hud.classList.add('hidden');
                 bossHint.classList.add('hidden');
+                abilityBar.classList.add('hidden');
                 controls.classList.add('hidden');
                 winScreen.classList.remove('hidden');
 
                 var maxLvl = seasonCounts[currentSeason - 1];
                 if (currentLevelIndex < maxLvl) {
                     winTitle.innerText = currentLevelIndex + "-BOSQICH YAKUNLANDI!";
-                    winDesc.innerText = "Ajoyib! Keyingi bosqich ochildi. O'tish uchun ENTER ni bosing.";
+                    winDesc.innerText = "Ajoyib! Keyingi bosqich ochildi.";
                     nextLevelBtn.innerText = "KEYINGI BOSQICH (ENTER)";
                 } else if (currentSeason < 10) {
                     winTitle.innerText = currentSeason + "-MAVSUM BOSSINI YENGDINGIZ! 🏆";
@@ -1289,13 +1726,21 @@ HTML
         }
     }
 
-    function drawNinjaCharacter(x, y, w, h, dir, animFrame, onGround, isEnemy, isMoving, isAttacking, weaponType) {
+    function drawNinjaWithEquippedSkin(x, y, w, h, dir, animFrame, onGround, isEnemy, isMoving, isAttacking, weaponType) {
         ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.65)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = isEnemy ? 3 : -3;
+        ctx.shadowOffsetY = 6;
+
         var cx = x + w / 2;
         var headRadius = 9.5;
         var headY = y + headRadius + 1;
 
-        var bandColor = isEnemy ? '#ef4444' : '#38bdf8';
+        var nObj = ninjaCharacters.find(function(n){ return n.id === equippedNinjaId; });
+        var skinColor = nObj ? nObj.color : '#38bdf8';
+
+        var bandColor = isEnemy ? '#ef4444' : skinColor;
         var suitColor = isEnemy ? '#2b0909' : '#111827';
         var outlineColor = isEnemy ? '#f87171' : '#7dd3fc';
         var eyeColor = isEnemy ? '#fef08a' : '#facc15';
@@ -1308,57 +1753,14 @@ HTML
         ctx.lineCap = 'round';
         var tailDir = -dir;
         var wave1 = Math.sin(animFrame * 1.4) * 4;
-        var wave2 = Math.cos(animFrame * 1.4) * 4;
 
         ctx.beginPath();
         ctx.moveTo(cx + tailDir * 6, headY - 2);
-        ctx.quadraticCurveTo(cx + tailDir * 14, headY - 4 + wave1, cx + tailDir * 22, headY + 2 + wave2);
+        ctx.quadraticCurveTo(cx + tailDir * 14, headY - 4 + wave1, cx + tailDir * 22, headY + 2);
         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(cx + tailDir * 6, headY);
-        ctx.quadraticCurveTo(cx + tailDir * 13, headY + 4 + wave2, cx + tailDir * 20, headY + 8 + wave1);
-        ctx.stroke();
-
-        var backArmAngle = isMoving ? -walkCycle * 0.65 : -0.25;
         var shoulderY = headY + headRadius + 3 + idleBreath;
-        ctx.save();
-        ctx.translate(cx, shoulderY);
-        ctx.rotate(backArmAngle);
-        ctx.strokeStyle = suitColor;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-dir * 3, 13);
-        ctx.stroke();
-        ctx.strokeStyle = bandColor;
-        ctx.lineWidth = 5.5;
-        ctx.beginPath();
-        ctx.moveTo(-dir * 2.5, 10);
-        ctx.lineTo(-dir * 3.5, 13);
-        ctx.stroke();
-        ctx.restore();
-
         var hipY = shoulderY + 14;
-        var backLegAngle = onGround ? -walkCycle * 0.7 : 0.45;
-        ctx.save();
-        ctx.translate(cx, hipY);
-        ctx.rotate(backLegAngle);
-        ctx.strokeStyle = suitColor;
-        ctx.lineWidth = 5.5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-dir * 2, 13);
-        ctx.stroke();
-        ctx.strokeStyle = bandColor;
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(-dir * 1.5, 10);
-        ctx.lineTo(-dir * 2.5, 13);
-        ctx.stroke();
-        ctx.restore();
 
         ctx.fillStyle = suitColor;
         ctx.strokeStyle = outlineColor;
@@ -1372,92 +1774,8 @@ HTML
         ctx.fill();
         ctx.stroke();
 
-        ctx.strokeStyle = bandColor;
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.moveTo(cx - 6, shoulderY);
-        ctx.lineTo(cx + 5, hipY - 2);
-        ctx.moveTo(cx + 6, shoulderY);
-        ctx.lineTo(cx - 5, hipY - 2);
-        ctx.stroke();
-
         ctx.fillStyle = bandColor;
         ctx.fillRect(cx - 6, hipY - 3, 12, 3.5);
-
-        var frontLegAngle = onGround ? walkCycle * 0.7 : -0.45;
-        ctx.save();
-        ctx.translate(cx, hipY);
-        ctx.rotate(frontLegAngle);
-        ctx.strokeStyle = suitColor;
-        ctx.lineWidth = 5.5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(dir * 2, 13);
-        ctx.stroke();
-        ctx.strokeStyle = bandColor;
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(dir * 1.5, 10);
-        ctx.lineTo(dir * 2.5, 13);
-        ctx.stroke();
-        ctx.restore();
-
-        var frontArmAngle = isAttacking ? -1.2 * dir : (isMoving ? walkCycle * 0.65 : 0.25);
-        ctx.save();
-        ctx.translate(cx, shoulderY);
-        ctx.rotate(frontArmAngle);
-        ctx.strokeStyle = suitColor;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(dir * 4, 13);
-        ctx.stroke();
-        ctx.strokeStyle = bandColor;
-        ctx.lineWidth = 5.5;
-        ctx.beginPath();
-        ctx.moveTo(dir * 3, 10);
-        ctx.lineTo(dir * 4.5, 13);
-        ctx.stroke();
-
-        if (isEnemy && weaponType === 'spear') {
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 3.5;
-            ctx.beginPath();
-            ctx.moveTo(dir * 4, 13);
-            ctx.lineTo(dir * (isAttacking ? 36 : 18), 8);
-            ctx.stroke();
-            ctx.fillStyle = '#f8fafc';
-            ctx.beginPath();
-            var tipX = dir === 1 ? (isAttacking ? x + w + 36 : x + w + 18) : (isAttacking ? x - 36 : x - 18);
-            ctx.moveTo(tipX, 8);
-            ctx.lineTo(tipX + dir * 8, 5);
-            ctx.lineTo(tipX + dir * 8, 11);
-            ctx.fill();
-        } else if (isEnemy && weaponType === 'sword') {
-            if (isAttacking) {
-                ctx.strokeStyle = '#f87171';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(dir * 4, 13);
-                ctx.lineTo(dir * 32, 4);
-                ctx.stroke();
-            }
-        } else if (isEnemy && weaponType === 'shuriken') {
-            ctx.fillStyle = '#f87171';
-            ctx.beginPath();
-            ctx.arc(dir * 14, 10, 4, 0, Math.PI * 2);
-            ctx.fill();
-        } else if (!isEnemy && isAttacking) {
-            ctx.strokeStyle = '#f8fafc';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(dir * 4, 13);
-            ctx.lineTo(dir * 34, 4);
-            ctx.stroke();
-        }
-        ctx.restore();
 
         ctx.fillStyle = suitColor;
         ctx.strokeStyle = outlineColor;
@@ -1468,7 +1786,15 @@ HTML
         ctx.stroke();
 
         ctx.fillStyle = bandColor;
-        ctx.fillRect(cx - headRadius + 0.5, headY - 4.5 + idleBreath * 0.5, headRadius * 2 - 1, 4);
+        ctx.fillRect(cx - headRadius + 0.5, headY - 4.5, headRadius * 2 - 1, 4);
+
+        if (!isEnemy && activeShieldTimer > 0) {
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(cx, y + h / 2, w * 0.9, 0, Math.PI * 2);
+            ctx.stroke();
+        }
 
         ctx.fillStyle = eyeColor;
         if (dir === 1) {
@@ -1493,12 +1819,14 @@ HTML
     function drawBoss(b) {
         if (!b || b.hp <= 0) return;
         ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 6;
 
         var cx = b.x + b.w / 2;
         var y = b.y;
         var isHurt = b.hurtTimer > 0;
-        var walkCycle = Math.sin(b.animFrame);
-        var sNum = b.season;
 
         var hpRatio = b.hp / b.maxHp;
         ctx.fillStyle = '#1e293b';
@@ -1514,155 +1842,36 @@ HTML
         ctx.textAlign = 'center';
         ctx.fillText(b.name, cx, y - 33);
 
-        if (sNum === 10) {
-            ctx.fillStyle = isHurt ? '#ffffff' : '#fb7185';
-            ctx.strokeStyle = '#f43f5e';
-            ctx.lineWidth = 3;
+        var headR = 14;
+        var headY = y + headR + 2;
+        var shoulderY = headY + headR + 3;
+        var hipY = shoulderY + 24;
 
-            ctx.beginPath();
-            ctx.ellipse(cx, y + 35, 36, 22, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+        ctx.fillStyle = isHurt ? '#ffffff' : '#1e1b4b';
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - 16, shoulderY);
+        ctx.lineTo(cx + 16, shoulderY);
+        ctx.lineTo(cx + 12, hipY);
+        ctx.lineTo(cx - 12, hipY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
 
-            ctx.fillStyle = '#fda4af';
-            ctx.beginPath();
-            ctx.moveTo(cx, y + 20);
-            ctx.lineTo(cx + (b.dir * -28), y - 12 + Math.sin(b.animFrame * 2) * 10);
-            ctx.lineTo(cx + (b.dir * 10), y + 15);
-            ctx.fill();
-            ctx.stroke();
+        ctx.fillStyle = isHurt ? '#ffffff' : '#1e1b4b';
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, headY, headR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
 
-            ctx.fillStyle = isHurt ? '#ffffff' : '#f43f5e';
-            ctx.beginPath();
-            ctx.arc(cx + (b.dir * 25), y + 22, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#facc15';
-            ctx.beginPath();
-            ctx.moveTo(cx + (b.dir * 28), y + 10);
-            ctx.lineTo(cx + (b.dir * 38), y - 4);
-            ctx.lineTo(cx + (b.dir * 22), y + 8);
-            ctx.fill();
-
-            if (Math.sin(b.animFrame) > 0) {
-                ctx.fillStyle = '#f97316';
-                ctx.beginPath();
-                ctx.arc(cx + (b.dir * 38), y + 25, 10 + Math.random() * 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            ctx.strokeStyle = '#f43f5e';
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.moveTo(cx - (b.dir * 25), y + 40);
-            ctx.quadraticCurveTo(cx - (b.dir * 45), y + 10 + Math.sin(b.animFrame)*15, cx - (b.dir * 55), y + 30);
-            ctx.stroke();
-
-        } else if (sNum === 7) {
-            ctx.fillStyle = isHurt ? '#ffffff' : '#64748b';
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 3;
-            ctx.fillRect(cx - 20, y + 18, 40, 48);
-            ctx.strokeRect(cx - 20, y + 18, 40, 48);
-            ctx.fillRect(cx - 14, y - 2, 28, 22);
-            ctx.strokeRect(cx - 14, y - 2, 28, 22);
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(b.dir === 1 ? cx + 2 : cx - 10, y + 5, 8, 4);
-
-        } else if (sNum === 3) {
-            ctx.fillStyle = isHurt ? '#ffffff' : '#22c55e';
-            ctx.strokeStyle = '#15803d';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(cx, y + 22, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            ctx.fillStyle = '#facc15';
-            ctx.fillRect(cx - 10, y + 18, 20, 6);
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(b.dir === 1 ? cx + 16 : cx - 16, y + 22);
-            ctx.lineTo(b.dir === 1 ? cx + 24 : cx - 24, y + 25);
-            ctx.stroke();
-
+        ctx.fillStyle = '#fef08a';
+        if (b.dir === 1) {
+            ctx.fillRect(cx + 2, headY - 1, 9, 4);
         } else {
-            var headR = 14;
-            var headY = y + headR + 2;
-            var shoulderY = headY + headR + 3;
-            var hipY = shoulderY + 24;
-
-            var bossSuitColor = isHurt ? '#ffffff' : (sNum % 2 === 0 ? '#1e1b4b' : '#311010');
-            var bossArmorColor = b.color;
-
-            ctx.strokeStyle = bossArmorColor;
-            ctx.lineWidth = 5;
-            ctx.lineCap = 'round';
-            var tailDir = -b.dir;
-            var wv = Math.sin(b.animFrame * 1.4) * 6;
-            ctx.beginPath();
-            ctx.moveTo(cx + tailDir * 10, headY - 3);
-            ctx.quadraticCurveTo(cx + tailDir * 24, headY - 8 + wv, cx + tailDir * 36, headY + 4 - wv);
-            ctx.stroke();
-
-            ctx.strokeStyle = isHurt ? '#fca5a5' : '#0f172a';
-            ctx.lineWidth = 9;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(cx - 7, hipY);
-            ctx.lineTo(cx - 9 - walkCycle * 6, hipY + 18);
-            ctx.moveTo(cx + 7, hipY);
-            ctx.lineTo(cx + 9 + walkCycle * 6, hipY + 18);
-            ctx.stroke();
-
-            ctx.fillStyle = bossSuitColor;
-            ctx.strokeStyle = bossArmorColor;
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(cx - 16, shoulderY);
-            ctx.lineTo(cx + 16, shoulderY);
-            ctx.lineTo(cx + 12, hipY);
-            ctx.lineTo(cx - 12, hipY);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = bossArmorColor;
-            ctx.fillRect(cx - 13, hipY - 5, 26, 5);
-
-            ctx.fillStyle = bossSuitColor;
-            ctx.strokeStyle = bossArmorColor;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(cx, headY, headR, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = bossArmorColor;
-            ctx.fillRect(cx - headR + 1, headY - 7, headR * 2 - 2, 5);
-
-            ctx.fillStyle = '#fef08a';
-            if (b.dir === 1) {
-                ctx.fillRect(cx + 2, headY - 1, 9, 4);
-            } else {
-                ctx.fillRect(cx - 11, headY - 1, 9, 4);
-            }
-        }
-
-        if (sNum === 1 || sNum === 3 || sNum === 6) {
-            ctx.fillStyle = b.shieldFlash > 0 ? 'rgba(250, 204, 21, 0.85)' : 'rgba(56, 189, 248, 0.55)';
-            ctx.strokeStyle = b.shieldFlash > 0 ? '#ffffff' : '#38bdf8';
-            ctx.lineWidth = 3;
-            if (b.dir === -1) {
-                ctx.beginPath();
-                ctx.arc(b.x + 8, y + b.h / 2, b.h / 2, Math.PI * 0.65, Math.PI * 1.35);
-                ctx.stroke();
-            } else {
-                ctx.beginPath();
-                ctx.arc(b.x + b.w - 8, y + b.h / 2, b.h / 2, -Math.PI * 0.35, Math.PI * 0.35);
-                ctx.stroke();
-            }
+            ctx.fillRect(cx - 11, headY - 1, 9, 4);
         }
 
         ctx.restore();
@@ -1670,7 +1879,6 @@ HTML
 
     function drawBackground() {
         var sMeta = seasonsMeta[currentSeason - 1];
-        
         var bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
         bgGrad.addColorStop(0, sMeta.bg1);
         bgGrad.addColorStop(1, sMeta.bg2);
@@ -1707,8 +1915,30 @@ HTML
         }
     }
 
+    function drawStyledPlatform(p, sMeta) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetY = 4;
+
+        ctx.fillStyle = sMeta.platBody;
+        ctx.fillRect(p.x, p.y + 6, p.w, p.h - 6);
+
+        ctx.fillStyle = sMeta.platTop;
+        ctx.fillRect(p.x, p.y, p.w, 7);
+
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(p.x, p.y, p.w, p.h);
+        ctx.restore();
+    }
+
     function drawChineseGate(p, isOpen) {
         ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 6;
+
         var gx = p.x;
         var gy = p.y;
         var gw = p.w;
@@ -1744,15 +1974,6 @@ HTML
         ctx.fill();
         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(gx + 2, gy + 45);
-        ctx.quadraticCurveTo(gx + gw / 2, gy + 32, gx + gw - 2, gy + 45);
-        ctx.lineTo(gx + gw + 6, gy + 52);
-        ctx.quadraticCurveTo(gx + gw / 2, gy + 38, gx - 6, gy + 52);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
         ctx.fillStyle = '#facc15';
         ctx.beginPath();
         ctx.arc(gx + gw / 2, gy + 36, 6, 0, Math.PI * 2);
@@ -1769,22 +1990,9 @@ HTML
 
         drawBackground();
 
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
-        ctx.lineWidth = 2;
-        for (var gx = 0; gx < worldWidth; gx += 160) {
-            ctx.beginPath();
-            ctx.moveTo(gx, 0);
-            ctx.lineTo(gx, canvas.height);
-            ctx.stroke();
-        }
-
+        var sMeta = seasonsMeta[currentSeason - 1];
         for (var i = 0; i < platforms.length; i++) {
-            var p = platforms[i];
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(p.x, p.y, p.w, p.h);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(p.x, p.y, p.w, p.h);
+            drawStyledPlatform(platforms[i], sMeta);
         }
 
         for (var cp = 0; cp < checkpoints.length; cp++) {
@@ -1801,14 +2009,14 @@ HTML
 
         for (var en = 0; en < enemies.length; en++) {
             var enemy = enemies[en];
-            drawNinjaCharacter(enemy.x, enemy.y, enemy.w, enemy.h, enemy.dir, enemy.animFrame, true, true, true, enemy.isAttacking, enemy.weapon);
+            drawNinjaWithEquippedSkin(enemy.x, enemy.y, enemy.w, enemy.h, enemy.dir, enemy.animFrame, true, true, true, enemy.isAttacking, enemy.weapon);
         }
 
         drawBoss(boss);
 
         for (var bp = 0; bp < bossProjectiles.length; bp++) {
             var proj = bossProjectiles[bp];
-            ctx.fillStyle = proj.season === 3 ? '#22c55e' : (proj.season === 10 ? '#f97316' : '#ef4444');
+            ctx.fillStyle = '#ef4444';
             ctx.beginPath();
             ctx.arc(proj.x, proj.y, proj.r, 0, Math.PI * 2);
             ctx.fill();
@@ -1877,28 +2085,8 @@ HTML
         var portalReady = (coinsCollected === totalCoinsInLevel && (!boss || boss.hp <= 0));
         drawChineseGate(portal, portalReady);
 
-        if (player.doubleJumpEffect > 0) {
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.ellipse(player.x + player.w / 2, player.y + player.h + 4, 18 - player.doubleJumpEffect, 5, 0, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
         var isMoving = (input.left || input.right);
-        drawNinjaCharacter(player.x, player.y, player.w, player.h, player.dir, player.animFrame, player.onGround, false, isMoving, player.isAttacking, 'player');
-
-        if (player.isAttacking) {
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            if (player.dir === 1) {
-                ctx.arc(player.x + player.w + 8, player.y + 22, 22, -Math.PI/2.2, Math.PI/2.2);
-            } else {
-                ctx.arc(player.x - 8, player.y + 22, 22, Math.PI/1.8, Math.PI * 1.45);
-            }
-            ctx.stroke();
-        }
+        drawNinjaWithEquippedSkin(player.x, player.y, player.w, player.h, player.dir, player.animFrame, player.onGround, false, isMoving, player.isAttacking, 'player');
 
         ctx.restore();
     }
@@ -1909,8 +2097,6 @@ HTML
         draw();
         requestAnimationFrame(loop);
     }
-
-    initSeasonMenu();
 </script>
 </body>
 </html>
