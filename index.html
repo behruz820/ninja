@@ -6,7 +6,7 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ninja Game - Har Xil Bosslar va Unikal Qobiliyatlar</title>
+    <title>Ninja Game - Haqiqiy Daraxtlar va Xitoycha Darvozalar</title>
     <style>
         * {
             box-sizing: border-box;
@@ -32,7 +32,7 @@ HTML
             width: 100%;
             max-width: 800px;
             aspect-ratio: 16 / 9;
-            background: radial-gradient(circle at 75% 22%, #1e293b 0%, #0f172a 55%, #020617 100%);
+            background: #0f172a;
             border: 3px solid #38bdf8;
             border-radius: 14px;
             overflow: hidden;
@@ -135,10 +135,15 @@ HTML
             transition: 0.2s;
             text-align: left;
         }
-        .season-card:hover {
+        .season-card:hover:not(.locked) {
             border-color: #38bdf8;
             transform: translateY(-2px);
             background: #273549;
+        }
+        .season-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #1e293b;
         }
         .s-title {
             font-size: 1rem;
@@ -173,19 +178,30 @@ HTML
             cursor: pointer;
             transition: 0.15s;
         }
-        .level-btn:hover {
+        .level-btn:hover:not(.locked) {
             background: #38bdf8;
             color: #020617;
             transform: scale(1.05);
+        }
+        .level-btn.locked {
+            background: #0f172a;
+            border-color: #334155;
+            color: #475569;
+            cursor: not-allowed;
         }
         .boss-lvl-btn {
             border-color: #f43f5e;
             background: #450a0a;
             color: #fca5a5;
         }
-        .boss-lvl-btn:hover {
+        .boss-lvl-btn:hover:not(.locked) {
             background: #f43f5e;
             color: #ffffff;
+        }
+        .boss-lvl-btn.locked {
+            background: #1a0505;
+            border-color: #331111;
+            color: #552222;
         }
 
         #hud {
@@ -255,7 +271,7 @@ HTML
     <!-- 1. Mavsumlar menyusi -->
     <div id="seasonMenu" class="screen">
         <h1>NINJA GAME</h1>
-        <p>Har bir mavsum oxirida O'ZIGA XOS BOSS va UNIKAL QOBILIYATLAR sizni kutmoqda!</p>
+        <p>Haqiqiy daraxtlar fonida va Xitoycha darvozalar orqali sarguzasht!</p>
         <div class="season-grid" id="seasonGrid"></div>
     </div>
 
@@ -263,14 +279,14 @@ HTML
     <div id="levelMenu" class="screen hidden">
         <button type="button" class="top-back-btn" onclick="backToSeasons()">◀ MAVSUMLAR</button>
         <h1 id="levelMenuTitle" style="font-size: 1.6rem; margin-top: 35px; margin-bottom: 5px;">BOSQICHNI TANLANG</h1>
-        <p id="levelMenuDesc">Mavsum oxirida noyob Boss bilan jang qiling!</p>
+        <p id="levelMenuDesc">O'tilgan bosqichlargina ochiq bo'ladi!</p>
         <div class="level-grid" id="levelGrid"></div>
     </div>
 
     <!-- 3. G'alaba ekrani -->
     <div id="winScreen" class="screen hidden">
         <h1 style="color: #4ade80;" id="winTitle">BOSQICH YAKUNLANDI!</h1>
-        <p id="winDesc">Tabriklayman! Keyingi bosqichga o'tish uchun ENTER ni bosing.</p>
+        <p id="winDesc">Tabriklayman! Keyingi bosqich ochildi.</p>
         <button type="button" class="btn" id="nextLevelBtn" onclick="nextLevel()">KEYINGI BOSQICH (ENTER)</button>
         <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA</button>
     </div>
@@ -343,6 +359,30 @@ HTML
     var worldWidth = 2400;
     var cameraX = 0;
 
+    var savedMaxLevel = parseInt(localStorage.getItem('ninjaMaxUnlockedLevel')) || 1;
+    var savedMaxSeason = parseInt(localStorage.getItem('ninjaMaxUnlockedSeason')) || 1;
+
+    function saveProgress(clearedSeason, clearedLevel) {
+        var clearedGlobal = getGlobalId(clearedSeason, clearedLevel);
+        var nextGlobal = clearedGlobal + 1;
+        
+        if (nextGlobal > savedMaxLevel) {
+            savedMaxLevel = nextGlobal;
+            localStorage.setItem('ninjaMaxUnlockedLevel', savedMaxLevel);
+        }
+        
+        var currentSeasonMaxLvl = 0;
+        for (var s = 1; s <= clearedSeason; s++) {
+            currentSeasonMaxLvl += seasonCounts[s - 1];
+        }
+        if (clearedGlobal >= currentSeasonMaxLvl && clearedSeason < 10) {
+            if (clearedSeason + 1 > savedMaxSeason) {
+                savedMaxSeason = clearedSeason + 1;
+                localStorage.setItem('ninjaMaxUnlockedSeason', savedMaxSeason);
+            }
+        }
+    }
+
     var player = {
         x: 60, y: 300, w: 32, h: 48,
         vx: 0, vy: 0, speed: 5.5, jump: -11.5,
@@ -361,6 +401,37 @@ HTML
 
     var seasonCounts = [5, 10, 10, 15, 15, 20, 20, 25, 25, 30];
 
+    // --- MAVSUM METADATA VA FONLAR ---
+    var seasonsMeta = [
+        { name: "1. Bahor (Barglar)", bg1: "#064e3b", bg2: "#022c22", particle: "leaf", treeColor: "#15803d", trunkColor: "#451a03" },
+        { name: "2. Yoz (Yorqin Quyosh)", bg1: "#1e3a8a", bg2: "#0f172a", particle: "firefly", treeColor: "#1e40af", trunkColor: "#1e293b" },
+        { name: "3. Kuz (Sariq Yaproqlar)", bg1: "#78350f", bg2: "#451a03", particle: "fallLeaf", treeColor: "#b45309", trunkColor: "#292524" },
+        { name: "4. Qish (Qor Bo'roni)", bg1: "#1e293b", bg2: "#090d16", particle: "snow", treeColor: "#cbd5e1", trunkColor: "#334155" },
+        { name: "5. Sakura (Pushti Gullar)", bg1: "#581c87", bg2: "#2e1065", particle: "petal", treeColor: "#f472b6", trunkColor: "#3b0764" },
+        { name: "6. Tungi Tuman", bg1: "#312e81", bg2: "#1e1b4b", particle: "fog", treeColor: "#3730a3", trunkColor: "#1e1b4b" },
+        { name: "7. Cho'l va Quyosh", bg1: "#78716c", bg2: "#292524", particle: "dust", treeColor: "#a8a29e", trunkColor: "#44403c" },
+        { name: "8. Vulqon va Olov", bg1: "#7f1d1d", bg2: "#450a0a", particle: "ember", treeColor: "#991b1b", trunkColor: "#262626" },
+        { name: "9. Elektr Storm", bg1: "#172554", bg2: "#030712", particle: "spark", treeColor: "#1e40af", trunkColor: "#020617" },
+        { name: "10. Kosmik / Ajdaho", bg1: "#3b0764", bg2: "#090214", particle: "star", treeColor: "#c084fc", trunkColor: "#1e1b4b" }
+    ];
+
+    var particles = [];
+    function initParticles(seasonIdx) {
+        particles = [];
+        var type = seasonsMeta[seasonIdx - 1].particle;
+        for (var i = 0; i < 45; i++) {
+            particles.push({
+                x: Math.random() * 3000,
+                y: Math.random() * 450,
+                vx: (type === 'snow' ? (Math.random() - 0.5) * 1 : (type === 'fallLeaf' ? 1 + Math.random() * 2 : (Math.random() - 0.5) * 2)),
+                vy: (type === 'snow' ? 1 + Math.random() * 2 : (type === 'fallLeaf' ? 0.8 + Math.random() * 1.5 : (Math.random() - 0.5) * 1.5)),
+                size: 2 + Math.random() * 4,
+                color: (type === 'spring' ? '#4ade80' : (type === 'fallLeaf' ? '#fb923c' : (type === 'snow' ? '#ffffff' : (type === 'petal' ? '#f472b6' : '#facc15')))),
+                alpha: 0.3 + Math.random() * 0.7
+            });
+        }
+    }
+
     var seasonBossData = [
         { name: "Qizil Qalqonli Shogun", title: "Orqadan zarba berish kerak!", color: "#ef4444" },
         { name: "Tungi Axsura Ninja", title: "Tez yuguradi va uchta sureken otadi!", color: "#818cf8" },
@@ -371,8 +442,16 @@ HTML
         { name: "Po'lat Titan Robot", title: "Juda baquvvat, ko'p marta uring!", color: "#64748b" },
         { name: "Qonli Ronin", title: "Ikki qo'l qilich bilan shiddatli hujum!", color: "#e11d48" },
         { name: "Elektr Storm Lord", title: "Tezkor chaqmoq tezligida o'q otadi!", color: "#facc15" },
-        { name: "Ajdaho Qiroli (Yakuniy Boss)", title: "Barcha kuchlarga ega oxirgi Boss!", color: "#fb7185" }
+        { name: "Ajdaho Qiroli (Yakuniy Boss)", title: "Uchuvchi Ajdaho! Olovli nafasdan qoching!", color: "#fb7185" }
     ];
+
+    function getGlobalId(season, levelIndex) {
+        var id = 0;
+        for (var s = 1; s < season; s++) {
+            id += seasonCounts[s - 1];
+        }
+        return id + levelIndex;
+    }
 
     function getLevelData(sIndex, lIndex, gId) {
         var seed = gId * 37;
@@ -419,13 +498,16 @@ HTML
             var bossMaxHp = 6 + (sIndex * 3);
             var bInfo = seasonBossData[sIndex - 1];
 
+            var bWidth = (sIndex === 10) ? 80 : 54;
+            var bHeight = (sIndex === 10) ? 65 : 76;
+
             bossData = {
-                x: arenaX + arenaW - 110,
-                y: arenaY - 76,
-                w: 54,
-                h: 76,
-                minX: arenaX + 20,
-                maxX: arenaX + arenaW - 74,
+                x: arenaX + arenaW - 120,
+                y: arenaY - bHeight,
+                w: bWidth,
+                h: bHeight,
+                minX: arenaX + 15,
+                maxX: arenaX + arenaW - bWidth - 15,
                 speed: 1.5 + (sIndex * 0.18),
                 dir: -1,
                 hp: bossMaxHp,
@@ -473,10 +555,10 @@ HTML
         }
 
         var portal = {
-            x: lastPlat.x + lastPlat.w - 44,
-            y: lastPlat.y - 65,
-            w: 36,
-            h: 65
+            x: lastPlat.x + lastPlat.w - 60,
+            y: lastPlat.y - 110,
+            w: 64,
+            h: 110
         };
 
         var enemies = [];
@@ -541,16 +623,24 @@ HTML
         seasonGrid.innerHTML = '';
         for (var s = 1; s <= 10; s++) {
             var count = seasonCounts[s - 1];
+            var seasonInfo = seasonsMeta[s - 1];
             var bInfo = seasonBossData[s - 1];
             var card = document.createElement('div');
             card.className = 'season-card';
-            card.innerHTML = '<div class="s-title">Mavsum ' + s + ' (' + count + ' bosqich)</div><div class="s-desc">👹 Boss: <b>' + bInfo.name + '</b></div>';
             
-            (function(seasonNum) {
-                card.onclick = function() {
-                    openSeasonLevels(seasonNum);
-                };
-            })(s);
+            var isSeasonUnlocked = (s <= savedMaxSeason);
+            if (!isSeasonUnlocked) {
+                card.classList.add('locked');
+                card.innerHTML = '<div class="s-title" style="color:#64748b;">' + seasonInfo.name + ' 🔒</div><div class="s-desc">Oldingi mavsum tugatilmagan!</div>';
+            } else {
+                card.innerHTML = '<div class="s-title">' + seasonInfo.name + '</div><div class="s-desc">👹 Boss: <b>' + bInfo.name + '</b></div>';
+                
+                (function(seasonNum) {
+                    card.onclick = function() {
+                        openSeasonLevels(seasonNum);
+                    };
+                })(s);
+            }
 
             seasonGrid.appendChild(card);
         }
@@ -562,28 +652,38 @@ HTML
         levelMenu.classList.remove('hidden');
 
         var totalLvl = seasonCounts[seasonNum - 1];
+        var seasonInfo = seasonsMeta[seasonNum - 1];
         var bInfo = seasonBossData[seasonNum - 1];
-        levelMenuTitle.innerText = seasonNum + "-MAVSUM BOSQICHLARI";
+        levelMenuTitle.innerText = seasonInfo.name.toUpperCase();
         levelMenuDesc.innerText = "Oxirgi Boss: " + bInfo.name;
 
         levelGrid.innerHTML = '';
         for (var l = 1; l <= totalLvl; l++) {
+            var gId = getGlobalId(seasonNum, l);
+            var isUnlocked = (gId <= savedMaxLevel);
+
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'level-btn';
-            if (l === totalLvl) {
-                btn.classList.add('boss-lvl-btn');
-                btn.innerText = l + ' 👹';
-            } else {
-                btn.innerText = l;
-            }
+            if (l === totalLvl) btn.classList.add('boss-lvl-btn');
 
-            (function(lvlIdx) {
-                btn.onclick = function() {
-                    lives = 3;
-                    startSeasonLevel(seasonNum, lvlIdx);
-                };
-            })(l);
+            if (!isUnlocked) {
+                btn.classList.add('locked');
+                btn.innerText = l + ' 🔒';
+            } else {
+                if (l === totalLvl) {
+                    btn.innerText = l + ' 👹';
+                } else {
+                    btn.innerText = l;
+                }
+
+                (function(lvlIdx) {
+                    btn.onclick = function() {
+                        lives = 3;
+                        startSeasonLevel(seasonNum, lvlIdx);
+                    };
+                })(l);
+            }
 
             levelGrid.appendChild(btn);
         }
@@ -593,6 +693,7 @@ HTML
         levelMenu.classList.add('hidden');
         bossHint.classList.add('hidden');
         seasonMenu.classList.remove('hidden');
+        initSeasonMenu();
     }
 
     function backToLevelMenu() {
@@ -603,20 +704,15 @@ HTML
         controls.classList.add('hidden');
         levelMenu.classList.remove('hidden');
         isPlaying = false;
-    }
-
-    function getGlobalId(season, levelIndex) {
-        var id = 0;
-        for (var s = 1; s < season; s++) {
-            id += seasonCounts[s - 1];
-        }
-        return id + levelIndex;
+        openSeasonLevels(currentSeason);
     }
 
     function startSeasonLevel(seasonNum, levelIndex) {
         currentSeason = seasonNum;
         currentLevelIndex = levelIndex;
         globalLevelId = getGlobalId(seasonNum, levelIndex);
+
+        initParticles(seasonNum);
 
         var data = getLevelData(seasonNum, levelIndex, globalLevelId);
         platforms = data.platforms;
@@ -692,8 +788,9 @@ HTML
     }
 
     function updateHUD() {
-        var lvlStr = currentSeason + "-MAVSUM | " + currentLevelIndex + "-BOSQICH";
-        if (boss && boss.hp > 0) lvlStr = currentSeason + "-MAVSUM | " + boss.name;
+        var sMeta = seasonsMeta[currentSeason - 1];
+        var lvlStr = sMeta.name + " | " + currentLevelIndex + "-BOSQICH";
+        if (boss && boss.hp > 0) lvlStr = sMeta.name + " | " + boss.name;
         hudLevelText.innerText = lvlStr;
 
         var hearts = "";
@@ -778,7 +875,7 @@ HTML
             boss.hurtTimer = 12;
             if (boss.hp <= 0) {
                 boss.hp = 0;
-                bossHint.innerText = "✅ " + boss.name.toUpperCase() + " YENGILDI! Portalga kiring!";
+                bossHint.innerText = "✅ " + boss.name.toUpperCase() + " YENGILDI! Xitoycha darvozaga kiring!";
                 bossHint.style.background = "rgba(21, 128, 61, 0.9)";
                 bossHint.style.borderColor = "#4ade80";
             }
@@ -809,7 +906,7 @@ HTML
 
         if (boss && boss.hp > 0) {
             if (swordBox.x < boss.x + boss.w && swordBox.x + swordBox.w > boss.x &&
-                swordBox.y < boss.y + boss.h && swordBox.y + boss.h > boss.y) {
+                swordBox.y < boss.y + boss.h && swordBox.y + swordBox.h > boss.y) {
                 damageBoss(player.x + player.w / 2, 2);
             }
         }
@@ -915,6 +1012,18 @@ HTML
         if (player.y > canvas.height) {
             loseLifeOrDie();
             return;
+        }
+
+        for (var p = 0; p < particles.length; p++) {
+            var pt = particles[p];
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            if (pt.y > canvas.height) {
+                pt.y = -10;
+                pt.x = cameraX + Math.random() * canvas.width;
+            }
+            if (pt.x > cameraX + canvas.width + 50) pt.x = cameraX - 50;
+            if (pt.x < cameraX - 50) pt.x = cameraX + canvas.width + 50;
         }
 
         player.onGround = false;
@@ -1096,7 +1205,7 @@ HTML
             if (Math.abs(player.x - boss.x) < 550) {
                 boss.shootTimer--;
                 if (boss.shootTimer <= 0) {
-                    boss.shootTimer = Math.max(45, 100 - boss.season * 5);
+                    boss.shootTimer = Math.max(40, 95 - boss.season * 4);
                     
                     var pCount = (boss.season >= 5) ? 2 : 1;
                     for (var pc = 0; pc < pCount; pc++) {
@@ -1149,11 +1258,14 @@ HTML
             }
         }
 
-        var bossDefeated = (!boss || boss.hp <= 0);
-        if (coinsCollected === totalCoinsInLevel && bossDefeated) {
+        var portalReady = (coinsCollected === totalCoinsInLevel && (!boss || boss.hp <= 0));
+        if (portalReady) {
             if (player.x < portal.x + portal.w && player.x + player.w > portal.x &&
                 player.y < portal.y + portal.h && player.y + player.h > portal.y) {
                 isPlaying = false;
+                
+                saveProgress(currentSeason, currentLevelIndex);
+
                 hud.classList.add('hidden');
                 bossHint.classList.add('hidden');
                 controls.classList.add('hidden');
@@ -1162,15 +1274,15 @@ HTML
                 var maxLvl = seasonCounts[currentSeason - 1];
                 if (currentLevelIndex < maxLvl) {
                     winTitle.innerText = currentLevelIndex + "-BOSQICH YAKUNLANDI!";
-                    winDesc.innerText = "Ajoyib! Keyingi bosqichga o'tish uchun ENTER ni bosing.";
+                    winDesc.innerText = "Ajoyib! Keyingi bosqich ochildi. O'tish uchun ENTER ni bosing.";
                     nextLevelBtn.innerText = "KEYINGI BOSQICH (ENTER)";
                 } else if (currentSeason < 10) {
                     winTitle.innerText = currentSeason + "-MAVSUM BOSSINI YENGDINGIZ! 🏆";
-                    winDesc.innerText = "Tabriklayman! " + (currentSeason + 1) + "-mavsumga o'tish uchun ENTER ni bosing.";
+                    winDesc.innerText = "Tabriklayman! " + (currentSeason + 1) + "-mavsum ochildi!";
                     nextLevelBtn.innerText = (currentSeason + 1) + "-MAVSUMGA O'TISH (ENTER)";
                 } else {
                     winTitle.innerText = "MUTLAQ G'ALABA: O'YIN TUGADI! 👑";
-                    winDesc.innerText = "Siz barcha 10 ta mavsum va Bosslarni mag'lub etdingiz!";
+                    winDesc.innerText = "Siz barcha 10 ta mavsum va Ajdaho Qirolni mag'lub etdingiz!";
                     nextLevelBtn.innerText = "MAVSUMLARGA QAYTISH (ENTER)";
                 }
             }
@@ -1402,74 +1514,140 @@ HTML
         ctx.textAlign = 'center';
         ctx.fillText(b.name, cx, y - 33);
 
-        var headR = 14;
-        var headY = y + headR + 2;
-        var shoulderY = headY + headR + 3;
-        var hipY = shoulderY + 24;
+        if (sNum === 10) {
+            ctx.fillStyle = isHurt ? '#ffffff' : '#fb7185';
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 3;
 
-        var bossSuitColor = isHurt ? '#ffffff' : (sNum % 2 === 0 ? '#1e1b4b' : '#311010');
-        var bossArmorColor = b.color;
+            ctx.beginPath();
+            ctx.ellipse(cx, y + 35, 36, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
 
-        ctx.strokeStyle = bossArmorColor;
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        var tailDir = -b.dir;
-        var wv = Math.sin(b.animFrame * 1.4) * 6;
-        ctx.beginPath();
-        ctx.moveTo(cx + tailDir * 10, headY - 3);
-        ctx.quadraticCurveTo(cx + tailDir * 24, headY - 8 + wv, cx + tailDir * 36, headY + 4 - wv);
-        ctx.stroke();
+            ctx.fillStyle = '#fda4af';
+            ctx.beginPath();
+            ctx.moveTo(cx, y + 20);
+            ctx.lineTo(cx + (b.dir * -28), y - 12 + Math.sin(b.animFrame * 2) * 10);
+            ctx.lineTo(cx + (b.dir * 10), y + 15);
+            ctx.fill();
+            ctx.stroke();
 
-        ctx.strokeStyle = isHurt ? '#fca5a5' : '#0f172a';
-        ctx.lineWidth = 9;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(cx - 7, hipY);
-        ctx.lineTo(cx - 9 - walkCycle * 6, hipY + 18);
-        ctx.moveTo(cx + 7, hipY);
-        ctx.lineTo(cx + 9 + walkCycle * 6, hipY + 18);
-        ctx.stroke();
+            ctx.fillStyle = isHurt ? '#ffffff' : '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(cx + (b.dir * 25), y + 22, 16, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
 
-        ctx.fillStyle = bossSuitColor;
-        ctx.strokeStyle = bossArmorColor;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(cx - 16, shoulderY);
-        ctx.lineTo(cx + 16, shoulderY);
-        ctx.lineTo(cx + 12, hipY);
-        ctx.lineTo(cx - 12, hipY);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath();
+            ctx.moveTo(cx + (b.dir * 28), y + 10);
+            ctx.lineTo(cx + (b.dir * 38), y - 4);
+            ctx.lineTo(cx + (b.dir * 22), y + 8);
+            ctx.fill();
 
-        ctx.fillStyle = bossArmorColor;
-        ctx.fillRect(cx - 13, hipY - 5, 26, 5);
+            if (Math.sin(b.animFrame) > 0) {
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                ctx.arc(cx + (b.dir * 38), y + 25, 10 + Math.random() * 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
-        ctx.strokeStyle = bossSuitColor;
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.moveTo(cx - 15, shoulderY + 3);
-        ctx.lineTo(cx - 22, shoulderY + 20 + walkCycle * 4);
-        ctx.moveTo(cx + 15, shoulderY + 3);
-        ctx.lineTo(cx + 22, shoulderY + 20 - walkCycle * 4);
-        ctx.stroke();
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(cx - (b.dir * 25), y + 40);
+            ctx.quadraticCurveTo(cx - (b.dir * 45), y + 10 + Math.sin(b.animFrame)*15, cx - (b.dir * 55), y + 30);
+            ctx.stroke();
 
-        ctx.fillStyle = bossSuitColor;
-        ctx.strokeStyle = bossArmorColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(cx, headY, headR, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        } else if (sNum === 7) {
+            ctx.fillStyle = isHurt ? '#ffffff' : '#64748b';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 3;
+            ctx.fillRect(cx - 20, y + 18, 40, 48);
+            ctx.strokeRect(cx - 20, y + 18, 40, 48);
+            ctx.fillRect(cx - 14, y - 2, 28, 22);
+            ctx.strokeRect(cx - 14, y - 2, 28, 22);
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(b.dir === 1 ? cx + 2 : cx - 10, y + 5, 8, 4);
 
-        ctx.fillStyle = bossArmorColor;
-        ctx.fillRect(cx - headR + 1, headY - 7, headR * 2 - 2, 5);
+        } else if (sNum === 3) {
+            ctx.fillStyle = isHurt ? '#ffffff' : '#22c55e';
+            ctx.strokeStyle = '#15803d';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cx, y + 22, 16, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#facc15';
+            ctx.fillRect(cx - 10, y + 18, 20, 6);
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(b.dir === 1 ? cx + 16 : cx - 16, y + 22);
+            ctx.lineTo(b.dir === 1 ? cx + 24 : cx - 24, y + 25);
+            ctx.stroke();
 
-        ctx.fillStyle = '#fef08a';
-        if (b.dir === 1) {
-            ctx.fillRect(cx + 2, headY - 1, 9, 4);
         } else {
-            ctx.fillRect(cx - 11, headY - 1, 9, 4);
+            var headR = 14;
+            var headY = y + headR + 2;
+            var shoulderY = headY + headR + 3;
+            var hipY = shoulderY + 24;
+
+            var bossSuitColor = isHurt ? '#ffffff' : (sNum % 2 === 0 ? '#1e1b4b' : '#311010');
+            var bossArmorColor = b.color;
+
+            ctx.strokeStyle = bossArmorColor;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            var tailDir = -b.dir;
+            var wv = Math.sin(b.animFrame * 1.4) * 6;
+            ctx.beginPath();
+            ctx.moveTo(cx + tailDir * 10, headY - 3);
+            ctx.quadraticCurveTo(cx + tailDir * 24, headY - 8 + wv, cx + tailDir * 36, headY + 4 - wv);
+            ctx.stroke();
+
+            ctx.strokeStyle = isHurt ? '#fca5a5' : '#0f172a';
+            ctx.lineWidth = 9;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(cx - 7, hipY);
+            ctx.lineTo(cx - 9 - walkCycle * 6, hipY + 18);
+            ctx.moveTo(cx + 7, hipY);
+            ctx.lineTo(cx + 9 + walkCycle * 6, hipY + 18);
+            ctx.stroke();
+
+            ctx.fillStyle = bossSuitColor;
+            ctx.strokeStyle = bossArmorColor;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(cx - 16, shoulderY);
+            ctx.lineTo(cx + 16, shoulderY);
+            ctx.lineTo(cx + 12, hipY);
+            ctx.lineTo(cx - 12, hipY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = bossArmorColor;
+            ctx.fillRect(cx - 13, hipY - 5, 26, 5);
+
+            ctx.fillStyle = bossSuitColor;
+            ctx.strokeStyle = bossArmorColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, headY, headR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = bossArmorColor;
+            ctx.fillRect(cx - headR + 1, headY - 7, headR * 2 - 2, 5);
+
+            ctx.fillStyle = '#fef08a';
+            if (b.dir === 1) {
+                ctx.fillRect(cx + 2, headY - 1, 9, 4);
+            } else {
+                ctx.fillRect(cx - 11, headY - 1, 9, 4);
+            }
         }
 
         if (sNum === 1 || sNum === 3 || sNum === 6) {
@@ -1490,13 +1668,108 @@ HTML
         ctx.restore();
     }
 
+    function drawBackground() {
+        var sMeta = seasonsMeta[currentSeason - 1];
+        
+        var bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        bgGrad.addColorStop(0, sMeta.bg1);
+        bgGrad.addColorStop(1, sMeta.bg2);
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(cameraX, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        for (var tx = -100; tx < worldWidth + 200; tx += 280) {
+            var trunkW = 18;
+            var trunkH = 140;
+            var groundY = 390;
+
+            ctx.fillStyle = sMeta.trunkColor;
+            ctx.fillRect(tx - trunkW / 2, groundY - trunkH, trunkW, trunkH);
+
+            ctx.fillStyle = sMeta.treeColor;
+            ctx.beginPath();
+            ctx.arc(tx, groundY - trunkH - 20, 55, 0, Math.PI * 2);
+            ctx.arc(tx - 25, groundY - trunkH - 5, 40, 0, Math.PI * 2);
+            ctx.arc(tx + 25, groundY - trunkH - 5, 40, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        for (var p = 0; p < particles.length; p++) {
+            var pt = particles[p];
+            ctx.save();
+            ctx.globalAlpha = pt.alpha;
+            ctx.fillStyle = pt.color;
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function drawChineseGate(p, isOpen) {
+        ctx.save();
+        var gx = p.x;
+        var gy = p.y;
+        var gw = p.w;
+        var gh = p.h;
+
+        ctx.fillStyle = '#991b1b';
+        ctx.fillRect(gx + 6, gy + 22, 10, gh - 22);
+        ctx.fillRect(gx + gw - 16, gy + 22, 10, gh - 22);
+
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(gx + 2, gy + gh - 8, 18, 8);
+        ctx.fillRect(gx + gw - 20, gy + gh - 8, 18, 8);
+
+        ctx.fillStyle = isOpen ? 'rgba(56, 189, 248, 0.35)' : 'rgba(15, 23, 42, 0.85)';
+        ctx.fillRect(gx + 16, gy + 26, gw - 32, gh - 34);
+
+        if (isOpen) {
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(gx + 16, gy + 26, gw - 32, gh - 34);
+        }
+
+        ctx.fillStyle = '#b91c1c';
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(gx - 6, gy + 24);
+        ctx.quadraticCurveTo(gx + gw / 2, gy - 2, gx + gw + 6, gy + 24);
+        ctx.lineTo(gx + gw + 12, gy + 32);
+        ctx.quadraticCurveTo(gx + gw / 2, gy + 10, gx - 12, gy + 32);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(gx + 2, gy + 45);
+        ctx.quadraticCurveTo(gx + gw / 2, gy + 32, gx + gw - 2, gy + 45);
+        ctx.lineTo(gx + gw + 6, gy + 52);
+        ctx.quadraticCurveTo(gx + gw / 2, gy + 38, gx - 6, gy + 52);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.arc(gx + gw / 2, gy + 36, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx.save();
         ctx.translate(-cameraX, 0);
 
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.06)';
+        drawBackground();
+
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
         ctx.lineWidth = 2;
         for (var gx = 0; gx < worldWidth; gx += 160) {
             ctx.beginPath();
@@ -1535,7 +1808,7 @@ HTML
 
         for (var bp = 0; bp < bossProjectiles.length; bp++) {
             var proj = bossProjectiles[bp];
-            ctx.fillStyle = proj.season === 3 ? '#22c55e' : (proj.season === 4 ? '#38bdf8' : '#ef4444');
+            ctx.fillStyle = proj.season === 3 ? '#22c55e' : (proj.season === 10 ? '#f97316' : '#ef4444');
             ctx.beginPath();
             ctx.arc(proj.x, proj.y, proj.r, 0, Math.PI * 2);
             ctx.fill();
@@ -1602,11 +1875,7 @@ HTML
         }
 
         var portalReady = (coinsCollected === totalCoinsInLevel && (!boss || boss.hp <= 0));
-        ctx.fillStyle = portalReady ? '#38bdf8' : '#334155';
-        ctx.fillRect(portal.x, portal.y, portal.w, portal.h);
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(portal.x, portal.y, portal.w, portal.h);
+        drawChineseGate(portal, portalReady);
 
         if (player.doubleJumpEffect > 0) {
             ctx.strokeStyle = '#38bdf8';
