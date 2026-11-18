@@ -6,7 +6,7 @@ HTML
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ninja Game - Jonli Personaj</title>
+    <title>Ninja Game - Har Xil Bosslar va Unikal Qobiliyatlar</title>
     <style>
         * {
             box-sizing: border-box;
@@ -32,7 +32,7 @@ HTML
             width: 100%;
             max-width: 800px;
             aspect-ratio: 16 / 9;
-            background: #0f172a;
+            background: radial-gradient(circle at 75% 22%, #1e293b 0%, #0f172a 55%, #020617 100%);
             border: 3px solid #38bdf8;
             border-radius: 14px;
             overflow: hidden;
@@ -69,7 +69,7 @@ HTML
         p {
             color: #94a3b8;
             margin-bottom: 15px;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
         .btn {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -95,6 +95,25 @@ HTML
             width: 180px;
             padding: 10px 20px;
             font-size: 0.95rem;
+        }
+        .top-back-btn {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid #38bdf8;
+            color: #38bdf8;
+            padding: 6px 14px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 15;
+            transition: 0.15s;
+        }
+        .top-back-btn:hover {
+            background: #38bdf8;
+            color: #020617;
         }
 
         .season-grid {
@@ -128,7 +147,7 @@ HTML
             margin-bottom: 3px;
         }
         .s-desc {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #94a3b8;
         }
 
@@ -149,7 +168,7 @@ HTML
             background: #1e293b;
             border: 2px solid #38bdf8;
             color: #ffffff;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: bold;
             cursor: pointer;
             transition: 0.15s;
@@ -159,17 +178,46 @@ HTML
             color: #020617;
             transform: scale(1.05);
         }
+        .boss-lvl-btn {
+            border-color: #f43f5e;
+            background: #450a0a;
+            color: #fca5a5;
+        }
+        .boss-lvl-btn:hover {
+            background: #f43f5e;
+            color: #ffffff;
+        }
 
         #hud {
             position: absolute;
             top: 12px; left: 15px; right: 15px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-weight: bold;
-            font-size: 1.05rem;
+            font-size: 0.85rem;
             color: #facc15;
             pointer-events: none;
             z-index: 5;
+        }
+        #hud button {
+            pointer-events: auto;
+        }
+        #bossHint {
+            position: absolute;
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(153, 27, 27, 0.88);
+            border: 1px solid #f87171;
+            color: #fef08a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 5;
+            pointer-events: none;
+            white-space: nowrap;
         }
         #controls {
             position: absolute;
@@ -178,14 +226,14 @@ HTML
             justify-content: space-between;
             z-index: 5;
         }
-        .ctrl-group { display: flex; gap: 12px; }
+        .ctrl-group { display: flex; gap: 8px; }
         .c-btn {
-            width: 55px; height: 55px;
+            width: 50px; height: 50px;
             border-radius: 50%;
             background: rgba(30, 41, 59, 0.85);
             border: 2px solid #38bdf8;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -194,6 +242,11 @@ HTML
             touch-action: manipulation;
         }
         .c-btn:active { background: #38bdf8; color: #020617; }
+        .action-btn {
+            border-color: #f43f5e;
+            color: #fca5a5;
+        }
+        .action-btn:active { background: #f43f5e; color: #fff; }
     </style>
 </head>
 <body>
@@ -202,40 +255,44 @@ HTML
     <!-- 1. Mavsumlar menyusi -->
     <div id="seasonMenu" class="screen">
         <h1>NINJA GAME</h1>
-        <p>10 ta mavsum | 3 ta jon | Haqiqiy Ninja Personaj dizayni!</p>
+        <p>Har bir mavsum oxirida O'ZIGA XOS BOSS va UNIKAL QOBILIYATLAR sizni kutmoqda!</p>
         <div class="season-grid" id="seasonGrid"></div>
     </div>
 
     <!-- 2. Bosqichlar menyusi -->
     <div id="levelMenu" class="screen hidden">
-        <h1 id="levelMenuTitle" style="font-size: 1.6rem; margin-bottom: 5px;">BOSQICHNI TANLANG</h1>
-        <p id="levelMenuDesc">Kerakli bosqichni bosing</p>
+        <button type="button" class="top-back-btn" onclick="backToSeasons()">◀ MAVSUMLAR</button>
+        <h1 id="levelMenuTitle" style="font-size: 1.6rem; margin-top: 35px; margin-bottom: 5px;">BOSQICHNI TANLANG</h1>
+        <p id="levelMenuDesc">Mavsum oxirida noyob Boss bilan jang qiling!</p>
         <div class="level-grid" id="levelGrid"></div>
-        <button type="button" class="btn btn-secondary" onclick="backToSeasons()">◀ MAVSUMLARGA</button>
     </div>
 
     <!-- 3. G'alaba ekrani -->
     <div id="winScreen" class="screen hidden">
         <h1 style="color: #4ade80;" id="winTitle">BOSQICH YAKUNLANDI!</h1>
-        <p id="winDesc">Tabriklayman! Keyingi bosqichga o'ting.</p>
-        <button type="button" class="btn" id="nextLevelBtn" onclick="nextLevel()">KEYINGI BOSQICH</button>
+        <p id="winDesc">Tabriklayman! Keyingi bosqichga o'tish uchun ENTER ni bosing.</p>
+        <button type="button" class="btn" id="nextLevelBtn" onclick="nextLevel()">KEYINGI BOSQICH (ENTER)</button>
         <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA</button>
     </div>
 
     <!-- 4. Game Over ekrani -->
     <div id="gameoverScreen" class="screen hidden">
         <h1 style="color: #ef4444;">YUTQAZDINGIZ! 💀</h1>
-        <p>Barcha jonlaringiz tugadi (Game Over).</p>
-        <button type="button" class="btn" onclick="restartGame()">QAYTA URINIB KO'RISH</button>
+        <p>So'nggi Checkpoint bayrog'idan qayta tug'ildingiz!</p>
+        <button type="button" class="btn" id="restartBtn" onclick="respawnAtCheckpoint()">DAVOM ETISH (ENTER)</button>
         <button type="button" class="btn btn-secondary" onclick="backToLevelMenu()">BOSQICHLARGA QAYTISH</button>
     </div>
 
     <!-- HUD -->
     <div id="hud" class="hidden">
+        <button type="button" class="top-back-btn" onclick="backToLevelMenu()" style="position: static; padding: 4px 10px; font-size: 0.8rem;">◀ MENYU</button>
         <span id="hudLevelText">1-MAVSUM | 1-BOSQICH</span>
         <span id="hudLivesText" style="color: #f43f5e;">JONLAR: 💖💖💖</span>
-        <span id="hudCoinText">OLTINLAR: 0 / 3</span>
+        <span id="hudCoinText">OLTINLAR: 0 / 5</span>
     </div>
+
+    <!-- Boss maslahati -->
+    <div id="bossHint" class="hidden"></div>
 
     <!-- Touch tugmalar -->
     <div id="controls" class="hidden">
@@ -244,7 +301,9 @@ HTML
             <button type="button" class="c-btn" id="btnRight">▶</button>
         </div>
         <div class="ctrl-group">
-            <button type="button" class="c-btn" id="btnJump" style="border-color: #facc15;">▲</button>
+            <button type="button" class="c-btn action-btn" id="btnSword" title="Qilich (Q)">⚔️</button>
+            <button type="button" class="c-btn action-btn" id="btnShuriken" title="Sureken (E)">🎯</button>
+            <button type="button" class="c-btn" id="btnJump" style="border-color: #facc15;" title="Sakrash">▲</button>
         </div>
     </div>
 
@@ -260,6 +319,7 @@ HTML
     var winScreen = document.getElementById('winScreen');
     var gameoverScreen = document.getElementById('gameoverScreen');
     var hud = document.getElementById('hud');
+    var bossHint = document.getElementById('bossHint');
     var controls = document.getElementById('controls');
     var seasonGrid = document.getElementById('seasonGrid');
     var levelGrid = document.getElementById('levelGrid');
@@ -277,70 +337,202 @@ HTML
     var currentLevelIndex = 1;
     var globalLevelId = 1;
     var coinsCollected = 0;
+    var totalCoinsInLevel = 5;
     var lives = 3;
+
+    var worldWidth = 2400;
+    var cameraX = 0;
 
     var player = {
         x: 60, y: 300, w: 32, h: 48,
-        vx: 0, vy: 0, speed: 5.5, jump: -12.5,
-        onGround: false, dir: 1, animFrame: 0
+        vx: 0, vy: 0, speed: 5.5, jump: -11.5,
+        onGround: false, jumpCount: 0, maxJumps: 2,
+        dir: 1, animFrame: 0,
+        isAttacking: false, attackTimer: 0,
+        doubleJumpEffect: 0
     };
+
+    var shurikens = [];
+    var enemyProjectiles = [];
+    var bossProjectiles = [];
+    var boss = null;
+    var checkpoints = [];
+    var activeCheckpoint = { x: 60, y: 300 };
 
     var seasonCounts = [5, 10, 10, 15, 15, 20, 20, 25, 25, 30];
 
-    function getLevelData(sIndex, lIndex, gId) {
-        var seed = gId * 29;
-        var platforms = [];
-        platforms.push({ x: 30, y: 370, w: 120, h: 16 });
+    var seasonBossData = [
+        { name: "Qizil Qalqonli Shogun", title: "Orqadan zarba berish kerak!", color: "#ef4444" },
+        { name: "Tungi Axsura Ninja", title: "Tez yuguradi va uchta sureken otadi!", color: "#818cf8" },
+        { name: "Zaharli Ilon Samurai", title: "Zaharli o'qlar otadi, tez sakrang!", color: "#22c55e" },
+        { name: "Muzlik Lordi", title: "Muz parchalari bilan hujum qiladi!", color: "#38bdf8" },
+        { name: "Olovli Demin", title: "Olovli to'plar otadi, qalqoni yonadi!", color: "#f97316" },
+        { name: "Qora Tuman Kabisi", title: "G'oyib bo'lib to'satdan hujum qiladi!", color: "#a855f7" },
+        { name: "Po'lat Titan Robot", title: "Juda baquvvat, ko'p marta uring!", color: "#64748b" },
+        { name: "Qonli Ronin", title: "Ikki qo'l qilich bilan shiddatli hujum!", color: "#e11d48" },
+        { name: "Elektr Storm Lord", title: "Tezkor chaqmoq tezligida o'q otadi!", color: "#facc15" },
+        { name: "Ajdaho Qiroli (Yakuniy Boss)", title: "Barcha kuchlarga ega oxirgi Boss!", color: "#fb7185" }
+    ];
 
-        var count = 3 + (sIndex % 4);
-        for (var i = 0; i < count; i++) {
-            var pw = Math.max(70, 110 - (sIndex * 3) - (lIndex % 10));
-            var px = 180 + (i * 145 + (seed % 40)) % 520;
-            var py = 310 - ((i * 42 + seed) % 210);
-            platforms.push({ x: px, y: py, w: pw, h: 16 });
+    function getLevelData(sIndex, lIndex, gId) {
+        var seed = gId * 37;
+        var platforms = [];
+        var isBossLevel = (lIndex === seasonCounts[sIndex - 1]);
+
+        platforms.push({ x: 30, y: 375, w: 140, h: 16 });
+
+        var stepCount = 12 + (sIndex - 1) * 2 + Math.floor((lIndex - 1) / 2);
+        if (stepCount > 32) stepCount = 32;
+
+        var currentX = 30;
+        var currentY = 375;
+
+        for (var i = 1; i <= stepCount; i++) {
+            var pw = Math.max(105, 135 - (sIndex * 2));
+            var gapX = 135 + ((seed + i * 19) % 35);
+            var nextX = currentX + gapX;
+
+            var deltaY = -50 + ((seed + i * 23) % 90);
+            var nextY = currentY + deltaY;
+
+            if (nextY < 140) nextY = 155 + ((i * 13) % 35);
+            if (nextY > 380) nextY = 350 - ((i * 13) % 40);
+
+            platforms.push({ x: nextX, y: nextY, w: pw, h: 16 });
+            currentX = nextX;
+            currentY = nextY;
         }
 
-        var coins = [
-            { x: platforms[1] ? platforms[1].x + 25 : 150, y: platforms[1] ? platforms[1].y - 35 : 240 },
-            { x: platforms[2] ? platforms[2].x + 25 : 350, y: platforms[2] ? platforms[2].y - 35 : 180 },
-            { x: platforms[3] ? platforms[3].x + 25 : 550, y: platforms[3] ? platforms[3].y - 35 : 120 }
-        ];
+        var bossData = null;
+        if (isBossLevel) {
+            var arenaX = currentX + 145;
+            var arenaY = 365;
+            var arenaW = 460;
+            platforms.push({ x: arenaX, y: arenaY, w: arenaW, h: 20 });
+
+            platforms.push({ x: arenaX + 40, y: 255, w: 110, h: 14 });
+            platforms.push({ x: arenaX + 310, y: 255, w: 110, h: 14 });
+
+            currentX = arenaX + arenaW - 100;
+            currentY = arenaY;
+
+            var bossMaxHp = 6 + (sIndex * 3);
+            var bInfo = seasonBossData[sIndex - 1];
+
+            bossData = {
+                x: arenaX + arenaW - 110,
+                y: arenaY - 76,
+                w: 54,
+                h: 76,
+                minX: arenaX + 20,
+                maxX: arenaX + arenaW - 74,
+                speed: 1.5 + (sIndex * 0.18),
+                dir: -1,
+                hp: bossMaxHp,
+                maxHp: bossMaxHp,
+                animFrame: 0,
+                shootTimer: 80,
+                hurtTimer: 0,
+                shieldFlash: 0,
+                name: bInfo.name,
+                hint: bInfo.title,
+                color: bInfo.color,
+                season: sIndex
+            };
+        }
 
         var lastPlat = platforms[platforms.length - 1];
-        var portal = { x: lastPlat.x + lastPlat.w - 40, y: lastPlat.y - 65, w: 36, h: 65 };
+        if (isBossLevel) {
+            lastPlat = platforms[platforms.length - 3];
+        }
 
-        var spikes = [];
+        var calculatedWorldWidth = Math.max(2200, lastPlat.x + lastPlat.w + 150);
+
+        var cpList = [];
+        cpList.push({ x: platforms[0].x + 40, y: platforms[0].y, active: true });
+        if (platforms.length > 8) {
+            var midPlat1 = platforms[Math.floor(platforms.length * 0.35)];
+            cpList.push({ x: midPlat1.x + midPlat1.w / 2, y: midPlat1.y, active: false });
+        }
+        if (platforms.length > 15) {
+            var midPlat2 = platforms[Math.floor(platforms.length * 0.70)];
+            cpList.push({ x: midPlat2.x + midPlat2.w / 2, y: midPlat2.y, active: false });
+        }
+
+        var coins = [];
+        var targetCoinCount = Math.min(8, 5 + Math.floor(sIndex / 3));
+        var limitPlatIndex = isBossLevel ? platforms.length - 3 : platforms.length;
+        var coinStep = Math.max(1, Math.floor((limitPlatIndex - 1) / targetCoinCount));
+
+        for (var cIdx = 1; cIdx < limitPlatIndex && coins.length < targetCoinCount; cIdx += coinStep) {
+            coins.push({
+                x: platforms[cIdx].x + platforms[cIdx].w / 2,
+                y: platforms[cIdx].y - 30,
+                taken: false
+            });
+        }
+
+        var portal = {
+            x: lastPlat.x + lastPlat.w - 44,
+            y: lastPlat.y - 65,
+            w: 36,
+            h: 65
+        };
+
         var enemies = [];
+        var balancedEnemyCount = Math.min(Math.floor(platforms.length * 0.45), 4 + sIndex + Math.floor(lIndex / 3));
+        var maxAvailablePlats = limitPlatIndex - 1;
 
-        if (sIndex >= 2) {
-            if (lIndex % 3 === 0 && platforms.length > 2) {
-                var targetPlat = platforms[2];
-                spikes.push({ x: targetPlat.x + 10, y: targetPlat.y - 14, w: Math.min(30, targetPlat.w - 20), h: 14 });
+        for (var e = 0; e < balancedEnemyCount; e++) {
+            var platIndex = 2 + Math.floor((e * (maxAvailablePlats - 1)) / balancedEnemyCount);
+            var ePlat = platforms[platIndex];
+
+            var weaponType = 'spear';
+            if (lIndex <= 2) {
+                weaponType = (e % 3 === 0) ? 'sword' : 'spear';
+            } else if (lIndex <= 5) {
+                var randVal = e % 3;
+                if (randVal === 0) weaponType = 'spear';
+                else if (randVal === 1) weaponType = 'sword';
+                else weaponType = 'shuriken';
+            } else {
+                var mixVal = (e + lIndex + sIndex) % 3;
+                if (mixVal === 0) weaponType = 'spear';
+                else if (mixVal === 1) weaponType = 'sword';
+                else weaponType = 'shuriken';
             }
+
+            var eSpeed = 1.0 + (sIndex * 0.12) + ((lIndex % 5) * 0.05);
+            enemies.push({
+                x: ePlat.x + 12,
+                y: ePlat.y - 44,
+                w: 30,
+                h: 44,
+                minX: ePlat.x + 4,
+                maxX: ePlat.x + ePlat.w - 34,
+                speed: eSpeed,
+                dir: (e % 2 === 0) ? 1 : -1,
+                animFrame: e * 1.1,
+                weapon: weaponType,
+                attackTimer: 70 + (e * 12),
+                isAttacking: false,
+                attackAnim: 0
+            });
         }
 
-        if (sIndex >= 4) {
-            if (lIndex % 2 === 0 && platforms.length > 1) {
-                var ePlat = platforms[1];
-                var eSpeed = 1.0 + (sIndex * 0.15);
-                enemies.push({
-                    x: ePlat.x + 10,
-                    y: ePlat.y - 32,
-                    w: 28, h: 32,
-                    minX: ePlat.x,
-                    maxX: ePlat.x + ePlat.w - 28,
-                    speed: eSpeed,
-                    dir: 1
-                });
-            }
-        }
-
-        return { platforms: platforms, coins: coins, portal: portal, spikes: spikes, enemies: enemies };
+        return {
+            platforms: platforms,
+            coins: coins,
+            portal: portal,
+            enemies: enemies,
+            worldWidth: calculatedWorldWidth,
+            boss: bossData,
+            checkpoints: cpList
+        };
     }
 
     var platforms = [];
     var coins = [];
-    var spikes = [];
     var enemies = [];
     var portal = {};
     var input = { left: false, right: false };
@@ -349,9 +541,10 @@ HTML
         seasonGrid.innerHTML = '';
         for (var s = 1; s <= 10; s++) {
             var count = seasonCounts[s - 1];
+            var bInfo = seasonBossData[s - 1];
             var card = document.createElement('div');
             card.className = 'season-card';
-            card.innerHTML = '<div class="s-title">Mavsum ' + s + '</div><div class="s-desc">' + count + ' ta bosqich</div>';
+            card.innerHTML = '<div class="s-title">Mavsum ' + s + ' (' + count + ' bosqich)</div><div class="s-desc">👹 Boss: <b>' + bInfo.name + '</b></div>';
             
             (function(seasonNum) {
                 card.onclick = function() {
@@ -369,15 +562,21 @@ HTML
         levelMenu.classList.remove('hidden');
 
         var totalLvl = seasonCounts[seasonNum - 1];
+        var bInfo = seasonBossData[seasonNum - 1];
         levelMenuTitle.innerText = seasonNum + "-MAVSUM BOSQICHLARI";
-        levelMenuDesc.innerText = "Jami " + totalLvl + " ta bosqich";
+        levelMenuDesc.innerText = "Oxirgi Boss: " + bInfo.name;
 
         levelGrid.innerHTML = '';
         for (var l = 1; l <= totalLvl; l++) {
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'level-btn';
-            btn.innerText = l;
+            if (l === totalLvl) {
+                btn.classList.add('boss-lvl-btn');
+                btn.innerText = l + ' 👹';
+            } else {
+                btn.innerText = l;
+            }
 
             (function(lvlIdx) {
                 btn.onclick = function() {
@@ -392,6 +591,7 @@ HTML
 
     function backToSeasons() {
         levelMenu.classList.add('hidden');
+        bossHint.classList.add('hidden');
         seasonMenu.classList.remove('hidden');
     }
 
@@ -399,6 +599,7 @@ HTML
         winScreen.classList.add('hidden');
         gameoverScreen.classList.add('hidden');
         hud.classList.add('hidden');
+        bossHint.classList.add('hidden');
         controls.classList.add('hidden');
         levelMenu.classList.remove('hidden');
         isPlaying = false;
@@ -420,13 +621,11 @@ HTML
         var data = getLevelData(seasonNum, levelIndex, globalLevelId);
         platforms = data.platforms;
         portal = data.portal;
-        
-        spikes = [];
-        if (data.spikes) {
-            for (var s = 0; s < data.spikes.length; s++) {
-                spikes.push({ x: data.spikes[s].x, y: data.spikes[s].y, w: data.spikes[s].w, h: data.spikes[s].h });
-            }
-        }
+        worldWidth = data.worldWidth;
+        boss = data.boss;
+        checkpoints = data.checkpoints;
+        activeCheckpoint = { x: checkpoints[0].x, y: checkpoints[0].y };
+        cameraX = 0;
 
         enemies = [];
         if (data.enemies) {
@@ -439,7 +638,12 @@ HTML
                     minX: data.enemies[e].minX,
                     maxX: data.enemies[e].maxX,
                     speed: data.enemies[e].speed,
-                    dir: 1
+                    dir: data.enemies[e].dir,
+                    animFrame: data.enemies[e].animFrame,
+                    weapon: data.enemies[e].weapon,
+                    attackTimer: data.enemies[e].attackTimer,
+                    isAttacking: false,
+                    attackAnim: 0
                 });
             }
         }
@@ -448,6 +652,11 @@ HTML
         for (var i = 0; i < data.coins.length; i++) {
             coins.push({ x: data.coins[i].x, y: data.coins[i].y, taken: false });
         }
+        totalCoinsInLevel = coins.length;
+
+        shurikens = [];
+        enemyProjectiles = [];
+        bossProjectiles = [];
 
         seasonMenu.classList.add('hidden');
         levelMenu.classList.add('hidden');
@@ -456,11 +665,24 @@ HTML
         hud.classList.remove('hidden');
         controls.classList.remove('hidden');
 
-        player.x = platforms[0].x + 10;
-        player.y = platforms[0].y - 50;
+        if (boss) {
+            bossHint.classList.remove('hidden');
+            bossHint.style.background = "rgba(153, 27, 27, 0.88)";
+            bossHint.style.borderColor = "#f87171";
+            bossHint.innerText = "👹 " + boss.name.toUpperCase() + ": " + boss.hint;
+        } else {
+            bossHint.classList.add('hidden');
+        }
+
+        player.x = activeCheckpoint.x;
+        player.y = activeCheckpoint.y - 50;
         player.vx = 0;
         player.vy = 0;
         player.onGround = false;
+        player.jumpCount = 0;
+        player.isAttacking = false;
+        player.attackTimer = 0;
+        player.doubleJumpEffect = 0;
 
         coinsCollected = 0;
         updateHUD();
@@ -470,24 +692,51 @@ HTML
     }
 
     function updateHUD() {
-        hudLevelText.innerText = currentSeason + "-MAVSUM | " + currentLevelIndex + "-BOSQICH";
+        var lvlStr = currentSeason + "-MAVSUM | " + currentLevelIndex + "-BOSQICH";
+        if (boss && boss.hp > 0) lvlStr = currentSeason + "-MAVSUM | " + boss.name;
+        hudLevelText.innerText = lvlStr;
+
         var hearts = "";
         for (var h = 0; h < lives; h++) hearts += "💖";
         hudLivesText.innerText = "JONLAR: " + hearts;
-        hudCoinText.innerText = "OLTINLAR: " + coinsCollected + " / 3";
+        hudCoinText.innerText = "OLTINLAR: " + coinsCollected + " / " + totalCoinsInLevel;
+    }
+
+    function respawnAtCheckpoint() {
+        gameoverScreen.classList.add('hidden');
+        hud.classList.remove('hidden');
+        controls.classList.remove('hidden');
+
+        player.x = activeCheckpoint.x;
+        player.y = activeCheckpoint.y - 50;
+        player.vx = 0;
+        player.vy = 0;
+        player.jumpCount = 0;
+        shurikens = [];
+        enemyProjectiles = [];
+        bossProjectiles = [];
+
+        var targetCamX = player.x - canvas.width * 0.35;
+        if (targetCamX < 0) targetCamX = 0;
+        if (targetCamX > worldWidth - canvas.width) targetCamX = worldWidth - canvas.width;
+        cameraX = targetCamX;
+
+        isPlaying = true;
+        requestAnimationFrame(loop);
     }
 
     function loseLifeOrDie() {
         lives--;
         updateHUD();
         if (lives > 0) {
-            player.x = platforms[0].x + 10;
-            player.y = platforms[0].y - 50;
-            player.vx = 0;
-            player.vy = 0;
+            isPlaying = false;
+            setTimeout(function() {
+                respawnAtCheckpoint();
+            }, 500);
         } else {
             isPlaying = false;
             hud.classList.add('hidden');
+            bossHint.classList.add('hidden');
             controls.classList.add('hidden');
             gameoverScreen.classList.remove('hidden');
         }
@@ -499,10 +748,83 @@ HTML
     }
 
     function doJump() {
-        if (isPlaying && player.onGround) {
+        if (!isPlaying) return;
+        if (player.onGround) {
             player.vy = player.jump;
             player.onGround = false;
+            player.jumpCount = 1;
+        } else if (player.jumpCount < player.maxJumps) {
+            player.vy = player.jump * 1.25;
+            player.jumpCount = 2;
+            player.doubleJumpEffect = 14;
         }
+    }
+
+    function damageBoss(attackSourceX, damageAmount) {
+        if (!boss || boss.hp <= 0) return;
+
+        var hitFromBehind = false;
+        var bossCenter = boss.x + boss.w / 2;
+
+        if (boss.season === 1 || boss.season === 3 || boss.season === 6) {
+            if (boss.dir === -1 && attackSourceX > bossCenter) hitFromBehind = true;
+            else if (boss.dir === 1 && attackSourceX < bossCenter) hitFromBehind = true;
+        } else {
+            hitFromBehind = true;
+        }
+
+        if (hitFromBehind) {
+            boss.hp -= damageAmount;
+            boss.hurtTimer = 12;
+            if (boss.hp <= 0) {
+                boss.hp = 0;
+                bossHint.innerText = "✅ " + boss.name.toUpperCase() + " YENGILDI! Portalga kiring!";
+                bossHint.style.background = "rgba(21, 128, 61, 0.9)";
+                bossHint.style.borderColor = "#4ade80";
+            }
+        } else {
+            boss.shieldFlash = 14;
+        }
+    }
+
+    function swordAttack() {
+        if (!isPlaying) return;
+        player.isAttacking = true;
+        player.attackTimer = 15;
+
+        var swordBox = {
+            x: player.dir === 1 ? player.x + player.w : player.x - 42,
+            y: player.y + 6,
+            w: 42,
+            h: 36
+        };
+
+        for (var i = enemies.length - 1; i >= 0; i--) {
+            var en = enemies[i];
+            if (swordBox.x < en.x + en.w && swordBox.x + swordBox.w > en.x &&
+                swordBox.y < en.y + en.h && swordBox.y + swordBox.h > en.y) {
+                enemies.splice(i, 1);
+            }
+        }
+
+        if (boss && boss.hp > 0) {
+            if (swordBox.x < boss.x + boss.w && swordBox.x + swordBox.w > boss.x &&
+                swordBox.y < boss.y + boss.h && swordBox.y + boss.h > boss.y) {
+                damageBoss(player.x + player.w / 2, 2);
+            }
+        }
+    }
+
+    function throwShuriken() {
+        if (!isPlaying) return;
+        shurikens.push({
+            x: player.dir === 1 ? player.x + player.w : player.x - 16,
+            y: player.y + 20,
+            vx: player.dir * 9.5,
+            w: 14,
+            h: 14,
+            rot: 0
+        });
     }
 
     function nextLevel() {
@@ -517,10 +839,25 @@ HTML
     }
 
     window.addEventListener('keydown', function(e) {
+        if (e.code === 'Enter') {
+            if (!winScreen.classList.contains('hidden')) {
+                nextLevel();
+                return;
+            }
+            if (!gameoverScreen.classList.contains('hidden')) {
+                restartGame();
+                return;
+            }
+        }
+
+        if (e.repeat) return;
         if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = true;
         if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = true;
         if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') doJump();
+        if (e.code === 'KeyQ') swordAttack();
+        if (e.code === 'KeyE') throwShuriken();
     });
+
     window.addEventListener('keyup', function(e) {
         if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = false;
         if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = false;
@@ -529,6 +866,8 @@ HTML
     var btnLeft = document.getElementById('btnLeft');
     var btnRight = document.getElementById('btnRight');
     var btnJump = document.getElementById('btnJump');
+    var btnSword = document.getElementById('btnSword');
+    var btnShuriken = document.getElementById('btnShuriken');
 
     btnLeft.onmousedown = btnLeft.ontouchstart = function(e) { e.preventDefault(); input.left = true; };
     btnLeft.onmouseup = btnLeft.ontouchend = function(e) { e.preventDefault(); input.left = false; };
@@ -537,27 +876,41 @@ HTML
     btnRight.onmouseup = btnRight.ontouchend = function(e) { e.preventDefault(); input.right = false; };
 
     btnJump.onmousedown = btnJump.ontouchstart = function(e) { e.preventDefault(); doJump(); };
+    btnSword.onclick = btnSword.ontouchstart = function(e) { e.preventDefault(); swordAttack(); };
+    btnShuriken.onclick = btnShuriken.ontouchstart = function(e) { e.preventDefault(); throwShuriken(); };
 
     function update() {
         if (input.left) {
             player.vx = -player.speed;
             player.dir = -1;
-            player.animFrame += 0.2;
+            player.animFrame += 0.25;
         } else if (input.right) {
             player.vx = player.speed;
             player.dir = 1;
-            player.animFrame += 0.2;
+            player.animFrame += 0.25;
         } else {
             player.vx = 0;
-            player.animFrame = 0;
+            player.animFrame += 0.05;
         }
+
+        if (player.isAttacking) {
+            player.attackTimer--;
+            if (player.attackTimer <= 0) player.isAttacking = false;
+        }
+
+        if (player.doubleJumpEffect > 0) player.doubleJumpEffect--;
 
         player.vy += 0.55;
         player.x += player.vx;
         player.y += player.vy;
 
         if (player.x < 0) player.x = 0;
-        if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+        if (player.x + player.w > worldWidth) player.x = worldWidth - player.w;
+
+        var targetCamX = player.x - canvas.width * 0.35;
+        if (targetCamX < 0) targetCamX = 0;
+        if (targetCamX > worldWidth - canvas.width) targetCamX = worldWidth - canvas.width;
+        cameraX += (targetCamX - cameraX) * 0.12;
 
         if (player.y > canvas.height) {
             loseLifeOrDie();
@@ -572,26 +925,212 @@ HTML
                 player.y = p.y - player.h;
                 player.vy = 0;
                 player.onGround = true;
+                player.jumpCount = 0;
             }
         }
 
-        for (var s = 0; s < spikes.length; s++) {
-            var sp = spikes[s];
-            if (player.x + player.w - 6 > sp.x && player.x + 6 < sp.x + sp.w &&
-                player.y + player.h > sp.y && player.y < sp.y + sp.h) {
-                loseLifeOrDie();
-                return;
+        for (var cp = 0; cp < checkpoints.length; cp++) {
+            var check = checkpoints[cp];
+            if (!check.active) {
+                var cdx = (player.x + player.w / 2) - check.x;
+                if (Math.abs(cdx) < 35 && Math.abs((player.y + player.h) - check.y) < 25) {
+                    check.active = true;
+                    activeCheckpoint = { x: check.x, y: check.y };
+                }
+            }
+        }
+
+        for (var s = shurikens.length - 1; s >= 0; s--) {
+            var sh = shurikens[s];
+            sh.x += sh.vx;
+            sh.rot += 0.4;
+
+            if (sh.x < cameraX - 50 || sh.x > cameraX + canvas.width + 50) {
+                shurikens.splice(s, 1);
+                continue;
+            }
+
+            var hitTarget = false;
+            for (var e = enemies.length - 1; e >= 0; e--) {
+                var en = enemies[e];
+                if (sh.x < en.x + en.w && sh.x + sh.w > en.x &&
+                    sh.y < en.y + en.h && sh.y + sh.h > en.y) {
+                    enemies.splice(e, 1);
+                    hitTarget = true;
+                    break;
+                }
+            }
+
+            if (!hitTarget && boss && boss.hp > 0) {
+                if (sh.x < boss.x + boss.w && sh.x + sh.w > boss.x &&
+                    sh.y < boss.y + boss.h && sh.y + sh.h > boss.y) {
+                    var originX = sh.vx > 0 ? sh.x - 20 : sh.x + 20;
+                    damageBoss(originX, 1);
+                    hitTarget = true;
+                }
+            }
+
+            if (hitTarget) {
+                shurikens.splice(s, 1);
             }
         }
 
         for (var en = 0; en < enemies.length; en++) {
             var enemy = enemies[en];
             enemy.x += enemy.speed * enemy.dir;
-            if (enemy.x > enemy.maxX) enemy.dir = -1;
-            if (enemy.x < enemy.minX) enemy.dir = 1;
+            enemy.animFrame += 0.22;
 
-            if (player.x + player.w - 4 > enemy.x && player.x + 4 < enemy.x + enemy.w &&
-                player.y + player.h > enemy.y && player.y < enemy.y + enemy.h) {
+            if (enemy.x >= enemy.maxX) {
+                enemy.x = enemy.maxX;
+                enemy.dir = -1;
+            }
+            if (enemy.x <= enemy.minX) {
+                enemy.x = enemy.minX;
+                enemy.dir = 1;
+            }
+
+            var distToPlayer = Math.abs((enemy.x + enemy.w / 2) - (player.x + player.w / 2));
+
+            if (enemy.weapon === 'spear') {
+                if (distToPlayer < 90) {
+                    enemy.attackTimer--;
+                    if (enemy.attackTimer <= 0) {
+                        enemy.isAttacking = true;
+                        enemy.attackAnim = 16;
+                        enemy.attackTimer = 60 + Math.random() * 30;
+                    }
+                }
+                if (enemy.isAttacking) {
+                    enemy.attackAnim--;
+                    if (enemy.attackAnim <= 0) enemy.isAttacking = false;
+
+                    var spearBox = {
+                        x: enemy.dir === 1 ? enemy.x + enemy.w : enemy.x - 38,
+                        y: enemy.y + 12,
+                        w: 38,
+                        h: 20
+                    };
+                    if (player.x < spearBox.x + spearBox.w && player.x + player.w > spearBox.x &&
+                        player.y < spearBox.y + spearBox.h && player.y + player.h > spearBox.y) {
+                        loseLifeOrDie();
+                        return;
+                    }
+                }
+            } else if (enemy.weapon === 'sword') {
+                if (distToPlayer < 120) {
+                    enemy.attackTimer--;
+                    if (enemy.attackTimer <= 0) {
+                        enemy.isAttacking = true;
+                        enemy.attackAnim = 14;
+                        enemy.attackTimer = 70 + Math.random() * 30;
+                    }
+                }
+                if (enemy.isAttacking) {
+                    enemy.attackAnim--;
+                    if (enemy.attackAnim <= 0) enemy.isAttacking = false;
+
+                    var swordBox = {
+                        x: enemy.dir === 1 ? enemy.x + enemy.w : enemy.x - 35,
+                        y: enemy.y + 6,
+                        w: 35,
+                        h: 36
+                    };
+                    if (player.x < swordBox.x + swordBox.w && player.x + player.w > swordBox.x &&
+                        player.y < swordBox.y + swordBox.h && player.y + player.h > swordBox.y) {
+                        loseLifeOrDie();
+                        return;
+                    }
+                }
+            } else if (enemy.weapon === 'shuriken') {
+                if (distToPlayer < 450) {
+                    enemy.dir = (player.x > enemy.x) ? 1 : -1;
+                    enemy.attackTimer--;
+                    if (enemy.attackTimer <= 0) {
+                        enemy.attackTimer = Math.max(50, 100 - (currentSeason * 4));
+                        enemyProjectiles.push({
+                            x: enemy.dir === 1 ? enemy.x + enemy.w : enemy.x - 14,
+                            y: enemy.y + 20,
+                            vx: enemy.dir * (5.0 + currentSeason * 0.2),
+                            w: 14,
+                            h: 14,
+                            rot: 0
+                        });
+                    }
+                }
+            }
+        }
+
+        for (var ep = enemyProjectiles.length - 1; ep >= 0; ep--) {
+            var proj = enemyProjectiles[ep];
+            proj.x += proj.vx;
+            proj.rot += 0.4;
+
+            if (proj.x < cameraX - 50 || proj.x > cameraX + canvas.width + 50) {
+                enemyProjectiles.splice(ep, 1);
+                continue;
+            }
+
+            if (player.x < proj.x + proj.w && player.x + player.w > proj.x &&
+                player.y < proj.y + proj.h && player.y + player.h > proj.y) {
+                enemyProjectiles.splice(ep, 1);
+                loseLifeOrDie();
+                return;
+            }
+        }
+
+        if (boss && boss.hp > 0) {
+            boss.x += boss.speed * boss.dir;
+            boss.animFrame += 0.18;
+            if (boss.hurtTimer > 0) boss.hurtTimer--;
+            if (boss.shieldFlash > 0) boss.shieldFlash--;
+
+            if (boss.x >= boss.maxX) {
+                boss.x = boss.maxX;
+                boss.dir = -1;
+            }
+            if (boss.x <= boss.minX) {
+                boss.x = boss.minX;
+                boss.dir = 1;
+            }
+
+            if (Math.abs(player.x - boss.x) < 550) {
+                boss.shootTimer--;
+                if (boss.shootTimer <= 0) {
+                    boss.shootTimer = Math.max(45, 100 - boss.season * 5);
+                    
+                    var pCount = (boss.season >= 5) ? 2 : 1;
+                    for (var pc = 0; pc < pCount; pc++) {
+                        bossProjectiles.push({
+                            x: boss.dir === 1 ? boss.x + boss.w : boss.x - 14,
+                            y: boss.y + 24 + (pc * 16),
+                            vx: boss.dir * (4.5 + boss.season * 0.3),
+                            r: 8 + (boss.season % 3),
+                            season: boss.season
+                        });
+                    }
+                }
+            }
+
+            if (player.x + player.w - 6 > boss.x && player.x + 6 < boss.x + boss.w &&
+                player.y + player.h - 4 > boss.y && player.y + 6 < boss.y + boss.h) {
+                loseLifeOrDie();
+                return;
+            }
+        }
+
+        for (var bp = bossProjectiles.length - 1; bp >= 0; bp--) {
+            var bproj = bossProjectiles[bp];
+            bproj.x += bproj.vx;
+
+            if (bproj.x < cameraX - 100 || bproj.x > cameraX + canvas.width + 100) {
+                bossProjectiles.splice(bp, 1);
+                continue;
+            }
+
+            var pdx = (player.x + player.w / 2) - bproj.x;
+            var pdy = (player.y + player.h / 2) - bproj.y;
+            if (Math.hypot(pdx, pdy) < bproj.r + 14) {
+                bossProjectiles.splice(bp, 1);
                 loseLifeOrDie();
                 return;
             }
@@ -610,34 +1149,361 @@ HTML
             }
         }
 
-        if (coinsCollected === 3) {
+        var bossDefeated = (!boss || boss.hp <= 0);
+        if (coinsCollected === totalCoinsInLevel && bossDefeated) {
             if (player.x < portal.x + portal.w && player.x + player.w > portal.x &&
                 player.y < portal.y + portal.h && player.y + player.h > portal.y) {
                 isPlaying = false;
                 hud.classList.add('hidden');
+                bossHint.classList.add('hidden');
                 controls.classList.add('hidden');
                 winScreen.classList.remove('hidden');
 
                 var maxLvl = seasonCounts[currentSeason - 1];
                 if (currentLevelIndex < maxLvl) {
                     winTitle.innerText = currentLevelIndex + "-BOSQICH YAKUNLANDI!";
-                    winDesc.innerText = "Ajoyib! Keyingi bosqichga o'ting.";
-                    nextLevelBtn.innerText = "KEYINGI BOSQICH";
+                    winDesc.innerText = "Ajoyib! Keyingi bosqichga o'tish uchun ENTER ni bosing.";
+                    nextLevelBtn.innerText = "KEYINGI BOSQICH (ENTER)";
                 } else if (currentSeason < 10) {
-                    winTitle.innerText = currentSeason + "-MAVSUM YAKUNLANDI! 🌟";
-                    winDesc.innerText = "Tabriklayman! Navbatdagi mavsum ochildi.";
-                    nextLevelBtn.innerText = (currentSeason + 1) + "-MAVSUMGA O'TISH";
+                    winTitle.innerText = currentSeason + "-MAVSUM BOSSINI YENGDINGIZ! 🏆";
+                    winDesc.innerText = "Tabriklayman! " + (currentSeason + 1) + "-mavsumga o'tish uchun ENTER ni bosing.";
+                    nextLevelBtn.innerText = (currentSeason + 1) + "-MAVSUMGA O'TISH (ENTER)";
                 } else {
-                    winTitle.innerText = "BASHARAT: O'YIN TUGADI! 🏆";
-                    winDesc.innerText = "Siz barcha 10 ta mavsum va 175 ta bosqichni yutdingiz!";
-                    nextLevelBtn.innerText = "MAVSUMLARGA QAYTISH";
+                    winTitle.innerText = "MUTLAQ G'ALABA: O'YIN TUGADI! 👑";
+                    winDesc.innerText = "Siz barcha 10 ta mavsum va Bosslarni mag'lub etdingiz!";
+                    nextLevelBtn.innerText = "MAVSUMLARGA QAYTISH (ENTER)";
                 }
             }
         }
     }
 
+    function drawNinjaCharacter(x, y, w, h, dir, animFrame, onGround, isEnemy, isMoving, isAttacking, weaponType) {
+        ctx.save();
+        var cx = x + w / 2;
+        var headRadius = 9.5;
+        var headY = y + headRadius + 1;
+
+        var bandColor = isEnemy ? '#ef4444' : '#38bdf8';
+        var suitColor = isEnemy ? '#2b0909' : '#111827';
+        var outlineColor = isEnemy ? '#f87171' : '#7dd3fc';
+        var eyeColor = isEnemy ? '#fef08a' : '#facc15';
+
+        var walkCycle = isMoving ? Math.sin(animFrame) : 0;
+        var idleBreath = Math.sin(animFrame * 0.8) * 1;
+
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        var tailDir = -dir;
+        var wave1 = Math.sin(animFrame * 1.4) * 4;
+        var wave2 = Math.cos(animFrame * 1.4) * 4;
+
+        ctx.beginPath();
+        ctx.moveTo(cx + tailDir * 6, headY - 2);
+        ctx.quadraticCurveTo(cx + tailDir * 14, headY - 4 + wave1, cx + tailDir * 22, headY + 2 + wave2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx + tailDir * 6, headY);
+        ctx.quadraticCurveTo(cx + tailDir * 13, headY + 4 + wave2, cx + tailDir * 20, headY + 8 + wave1);
+        ctx.stroke();
+
+        var backArmAngle = isMoving ? -walkCycle * 0.65 : -0.25;
+        var shoulderY = headY + headRadius + 3 + idleBreath;
+        ctx.save();
+        ctx.translate(cx, shoulderY);
+        ctx.rotate(backArmAngle);
+        ctx.strokeStyle = suitColor;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-dir * 3, 13);
+        ctx.stroke();
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 5.5;
+        ctx.beginPath();
+        ctx.moveTo(-dir * 2.5, 10);
+        ctx.lineTo(-dir * 3.5, 13);
+        ctx.stroke();
+        ctx.restore();
+
+        var hipY = shoulderY + 14;
+        var backLegAngle = onGround ? -walkCycle * 0.7 : 0.45;
+        ctx.save();
+        ctx.translate(cx, hipY);
+        ctx.rotate(backLegAngle);
+        ctx.strokeStyle = suitColor;
+        ctx.lineWidth = 5.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-dir * 2, 13);
+        ctx.stroke();
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(-dir * 1.5, 10);
+        ctx.lineTo(-dir * 2.5, 13);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = suitColor;
+        ctx.strokeStyle = outlineColor;
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.moveTo(cx - 8, shoulderY - 1);
+        ctx.lineTo(cx + 8, shoulderY - 1);
+        ctx.lineTo(cx + 5.5, hipY + 1);
+        ctx.lineTo(cx - 5.5, hipY + 1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(cx - 6, shoulderY);
+        ctx.lineTo(cx + 5, hipY - 2);
+        ctx.moveTo(cx + 6, shoulderY);
+        ctx.lineTo(cx - 5, hipY - 2);
+        ctx.stroke();
+
+        ctx.fillStyle = bandColor;
+        ctx.fillRect(cx - 6, hipY - 3, 12, 3.5);
+
+        var frontLegAngle = onGround ? walkCycle * 0.7 : -0.45;
+        ctx.save();
+        ctx.translate(cx, hipY);
+        ctx.rotate(frontLegAngle);
+        ctx.strokeStyle = suitColor;
+        ctx.lineWidth = 5.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(dir * 2, 13);
+        ctx.stroke();
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(dir * 1.5, 10);
+        ctx.lineTo(dir * 2.5, 13);
+        ctx.stroke();
+        ctx.restore();
+
+        var frontArmAngle = isAttacking ? -1.2 * dir : (isMoving ? walkCycle * 0.65 : 0.25);
+        ctx.save();
+        ctx.translate(cx, shoulderY);
+        ctx.rotate(frontArmAngle);
+        ctx.strokeStyle = suitColor;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(dir * 4, 13);
+        ctx.stroke();
+        ctx.strokeStyle = bandColor;
+        ctx.lineWidth = 5.5;
+        ctx.beginPath();
+        ctx.moveTo(dir * 3, 10);
+        ctx.lineTo(dir * 4.5, 13);
+        ctx.stroke();
+
+        if (isEnemy && weaponType === 'spear') {
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.moveTo(dir * 4, 13);
+            ctx.lineTo(dir * (isAttacking ? 36 : 18), 8);
+            ctx.stroke();
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            var tipX = dir === 1 ? (isAttacking ? x + w + 36 : x + w + 18) : (isAttacking ? x - 36 : x - 18);
+            ctx.moveTo(tipX, 8);
+            ctx.lineTo(tipX + dir * 8, 5);
+            ctx.lineTo(tipX + dir * 8, 11);
+            ctx.fill();
+        } else if (isEnemy && weaponType === 'sword') {
+            if (isAttacking) {
+                ctx.strokeStyle = '#f87171';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(dir * 4, 13);
+                ctx.lineTo(dir * 32, 4);
+                ctx.stroke();
+            }
+        } else if (isEnemy && weaponType === 'shuriken') {
+            ctx.fillStyle = '#f87171';
+            ctx.beginPath();
+            ctx.arc(dir * 14, 10, 4, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (!isEnemy && isAttacking) {
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(dir * 4, 13);
+            ctx.lineTo(dir * 34, 4);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        ctx.fillStyle = suitColor;
+        ctx.strokeStyle = outlineColor;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(cx, headY + idleBreath * 0.5, headRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = bandColor;
+        ctx.fillRect(cx - headRadius + 0.5, headY - 4.5 + idleBreath * 0.5, headRadius * 2 - 1, 4);
+
+        ctx.fillStyle = eyeColor;
+        if (dir === 1) {
+            ctx.beginPath();
+            ctx.moveTo(cx + 1, headY - 0.5);
+            ctx.lineTo(cx + 7.5, headY - 2);
+            ctx.lineTo(cx + 7, headY + 1.5);
+            ctx.closePath();
+            ctx.fill();
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(cx - 1, headY - 0.5);
+            ctx.lineTo(cx - 7.5, headY - 2);
+            ctx.lineTo(cx - 7, headY + 1.5);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    function drawBoss(b) {
+        if (!b || b.hp <= 0) return;
+        ctx.save();
+
+        var cx = b.x + b.w / 2;
+        var y = b.y;
+        var isHurt = b.hurtTimer > 0;
+        var walkCycle = Math.sin(b.animFrame);
+        var sNum = b.season;
+
+        var hpRatio = b.hp / b.maxHp;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(b.x - 15, y - 28, b.w + 30, 9);
+        ctx.fillStyle = b.color;
+        ctx.fillRect(b.x - 15, y - 28, (b.w + 30) * hpRatio, 9);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(b.x - 15, y - 28, b.w + 30, 9);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.name, cx, y - 33);
+
+        var headR = 14;
+        var headY = y + headR + 2;
+        var shoulderY = headY + headR + 3;
+        var hipY = shoulderY + 24;
+
+        var bossSuitColor = isHurt ? '#ffffff' : (sNum % 2 === 0 ? '#1e1b4b' : '#311010');
+        var bossArmorColor = b.color;
+
+        ctx.strokeStyle = bossArmorColor;
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        var tailDir = -b.dir;
+        var wv = Math.sin(b.animFrame * 1.4) * 6;
+        ctx.beginPath();
+        ctx.moveTo(cx + tailDir * 10, headY - 3);
+        ctx.quadraticCurveTo(cx + tailDir * 24, headY - 8 + wv, cx + tailDir * 36, headY + 4 - wv);
+        ctx.stroke();
+
+        ctx.strokeStyle = isHurt ? '#fca5a5' : '#0f172a';
+        ctx.lineWidth = 9;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx - 7, hipY);
+        ctx.lineTo(cx - 9 - walkCycle * 6, hipY + 18);
+        ctx.moveTo(cx + 7, hipY);
+        ctx.lineTo(cx + 9 + walkCycle * 6, hipY + 18);
+        ctx.stroke();
+
+        ctx.fillStyle = bossSuitColor;
+        ctx.strokeStyle = bossArmorColor;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - 16, shoulderY);
+        ctx.lineTo(cx + 16, shoulderY);
+        ctx.lineTo(cx + 12, hipY);
+        ctx.lineTo(cx - 12, hipY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = bossArmorColor;
+        ctx.fillRect(cx - 13, hipY - 5, 26, 5);
+
+        ctx.strokeStyle = bossSuitColor;
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(cx - 15, shoulderY + 3);
+        ctx.lineTo(cx - 22, shoulderY + 20 + walkCycle * 4);
+        ctx.moveTo(cx + 15, shoulderY + 3);
+        ctx.lineTo(cx + 22, shoulderY + 20 - walkCycle * 4);
+        ctx.stroke();
+
+        ctx.fillStyle = bossSuitColor;
+        ctx.strokeStyle = bossArmorColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, headY, headR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = bossArmorColor;
+        ctx.fillRect(cx - headR + 1, headY - 7, headR * 2 - 2, 5);
+
+        ctx.fillStyle = '#fef08a';
+        if (b.dir === 1) {
+            ctx.fillRect(cx + 2, headY - 1, 9, 4);
+        } else {
+            ctx.fillRect(cx - 11, headY - 1, 9, 4);
+        }
+
+        if (sNum === 1 || sNum === 3 || sNum === 6) {
+            ctx.fillStyle = b.shieldFlash > 0 ? 'rgba(250, 204, 21, 0.85)' : 'rgba(56, 189, 248, 0.55)';
+            ctx.strokeStyle = b.shieldFlash > 0 ? '#ffffff' : '#38bdf8';
+            ctx.lineWidth = 3;
+            if (b.dir === -1) {
+                ctx.beginPath();
+                ctx.arc(b.x + 8, y + b.h / 2, b.h / 2, Math.PI * 0.65, Math.PI * 1.35);
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.arc(b.x + b.w - 8, y + b.h / 2, b.h / 2, -Math.PI * 0.35, Math.PI * 0.35);
+                ctx.stroke();
+            }
+        }
+
+        ctx.restore();
+    }
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.06)';
+        ctx.lineWidth = 2;
+        for (var gx = 0; gx < worldWidth; gx += 160) {
+            ctx.beginPath();
+            ctx.moveTo(gx, 0);
+            ctx.lineTo(gx, canvas.height);
+            ctx.stroke();
+        }
 
         for (var i = 0; i < platforms.length; i++) {
             var p = platforms[i];
@@ -648,19 +1514,78 @@ HTML
             ctx.strokeRect(p.x, p.y, p.w, p.h);
         }
 
-        for (var s = 0; s < spikes.length; s++) {
-            var sp = spikes[s];
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(sp.x, sp.y + 4, sp.w, sp.h - 4);
+        for (var cp = 0; cp < checkpoints.length; cp++) {
+            var check = checkpoints[cp];
+            ctx.fillStyle = check.active ? '#4ade80' : '#64748b';
+            ctx.fillRect(check.x - 3, check.y - 38, 6, 38);
+            ctx.fillStyle = check.active ? '#22c55e' : '#94a3b8';
+            ctx.beginPath();
+            ctx.moveTo(check.x + 3, check.y - 38);
+            ctx.lineTo(check.x + 22, check.y - 30);
+            ctx.lineTo(check.x + 3, check.y - 22);
+            ctx.fill();
         }
 
         for (var en = 0; en < enemies.length; en++) {
             var enemy = enemies[en];
-            ctx.fillStyle = '#b91c1c';
-            ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
-            ctx.strokeStyle = '#fef08a';
+            drawNinjaCharacter(enemy.x, enemy.y, enemy.w, enemy.h, enemy.dir, enemy.animFrame, true, true, true, enemy.isAttacking, enemy.weapon);
+        }
+
+        drawBoss(boss);
+
+        for (var bp = 0; bp < bossProjectiles.length; bp++) {
+            var proj = bossProjectiles[bp];
+            ctx.fillStyle = proj.season === 3 ? '#22c55e' : (proj.season === 4 ? '#38bdf8' : '#ef4444');
+            ctx.beginPath();
+            ctx.arc(proj.x, proj.y, proj.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#facc15';
             ctx.lineWidth = 2;
-            ctx.strokeRect(enemy.x, enemy.y, enemy.w, enemy.h);
+            ctx.stroke();
+        }
+
+        for (var s = 0; s < shurikens.length; s++) {
+            var sh = shurikens[s];
+            ctx.save();
+            ctx.translate(sh.x + 7, sh.y + 7);
+            ctx.rotate(sh.rot || 0);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            for (var k = 0; k < 4; k++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.moveTo(0, -8);
+                ctx.lineTo(2.5, -2.5);
+                ctx.lineTo(8, 0);
+                ctx.lineTo(2.5, 2.5);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        for (var ep = 0; ep < enemyProjectiles.length; ep++) {
+            var esh = enemyProjectiles[ep];
+            ctx.save();
+            ctx.translate(esh.x + 7, esh.y + 7);
+            ctx.rotate(esh.rot || 0);
+            ctx.fillStyle = '#f87171';
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            for (var ek = 0; ek < 4; ek++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.moveTo(0, -7);
+                ctx.lineTo(2, -2);
+                ctx.lineTo(7, 0);
+                ctx.lineTo(2, 2);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
         }
 
         for (var j = 0; j < coins.length; j++) {
@@ -676,48 +1601,35 @@ HTML
             }
         }
 
-        ctx.fillStyle = coinsCollected === 3 ? '#38bdf8' : '#334155';
+        var portalReady = (coinsCollected === totalCoinsInLevel && (!boss || boss.hp <= 0));
+        ctx.fillStyle = portalReady ? '#38bdf8' : '#334155';
         ctx.fillRect(portal.x, portal.y, portal.w, portal.h);
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.strokeRect(portal.x, portal.y, portal.w, portal.h);
 
-        // --- NINJA PERSONAJI (Odam gavdasi va Ninja uslubi) ---
-        ctx.save();
-        var px = player.x;
-        var py = player.y;
-
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(px + 4, py, 24, 18);
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(px + 4, py, 24, 18);
-
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(px + 2, py + 5, 28, 5);
-
-        ctx.fillStyle = '#facc15';
-        if (player.dir === 1) {
-            ctx.fillRect(px + 18, py + 7, 6, 3);
-        } else {
-            ctx.fillRect(px + 8, py + 7, 6, 3);
+        if (player.doubleJumpEffect > 0) {
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(player.x + player.w / 2, player.y + player.h + 4, 18 - player.doubleJumpEffect, 5, 0, 0, Math.PI * 2);
+            ctx.stroke();
         }
 
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(px + 6, py + 18, 20, 20);
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(px + 6, py + 18, 20, 20);
+        var isMoving = (input.left || input.right);
+        drawNinjaCharacter(player.x, player.y, player.w, player.h, player.dir, player.animFrame, player.onGround, false, isMoving, player.isAttacking, 'player');
 
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(px + 6, py + 26, 20, 4);
-
-        ctx.fillStyle = '#0f172a';
-        var legOffset = Math.sin(player.animFrame) * 6;
-        if (!player.onGround) legOffset = 4;
-
-        ctx.fillRect(px + 7, py + 38, 7, 10 + (player.onGround ? legOffset : 0));
-        ctx.fillRect(px + 18, py + 38, 7, 10 - (player.onGround ? legOffset : 0));
+        if (player.isAttacking) {
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            if (player.dir === 1) {
+                ctx.arc(player.x + player.w + 8, player.y + 22, 22, -Math.PI/2.2, Math.PI/2.2);
+            } else {
+                ctx.arc(player.x - 8, player.y + 22, 22, Math.PI/1.8, Math.PI * 1.45);
+            }
+            ctx.stroke();
+        }
 
         ctx.restore();
     }
